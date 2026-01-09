@@ -7,7 +7,12 @@
 #define CONSOLE_WIDTH 80
 #define CONSOLE_HEIGHT 25
 #define VGA_ATTR 0x0f
+#define CURSOR_START 0x0
+#define CURSOR_END 0xf
 
+void set_console_cursor_pos(void);
+void enable_console_cursor(void);
+void disable_console_cursor(void);
 void console_reset(void);
 void console_scroll(void);
 void console_putc(char c);
