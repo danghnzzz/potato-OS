@@ -70,6 +70,19 @@ void console_putc(char c)
         cursor_x = 0;
         cursor_y++;
     }
+    else if (c == '\b')
+    {
+        if (cursor_x > 0)
+        {
+            cursor_x--;
+        }
+        else if (cursor_y > 0)
+        {
+            cursor_y--;
+            cursor_x = CONSOLE_WIDTH - 1;
+        }
+        VGA_ADDRESS[cursor_y * CONSOLE_WIDTH + cursor_x] = (VGA_ATTR << 8) | ' ';
+    }
     else
     {
         VGA_ADDRESS[cursor_y * CONSOLE_WIDTH + cursor_x] = (VGA_ATTR << 8) | (uint8_t) c;
