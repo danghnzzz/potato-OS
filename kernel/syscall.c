@@ -1,0 +1,45 @@
+#include <stdint.h>
+#include <kernel/interrupts.h>
+#include <kernel/syscall.h>
+
+static syscall_handler_t syscall_handlers[MAX_NUM_SYSCALL];
+
+static void syscall_dispatch(syscall_registers_t *regs)
+{
+    uint32_t num = regs->eax;
+    if (num < MAX_NUM_SYSCALL && syscall_handlers[num])
+    {
+        regs->eax = syscall_handlers[num](regs);
+        return;
+    }
+    regs->eax = (uint32_t) -1;
+}
+
+__attribute__((naked)) static void syscall_entry(void)
+{
+    __asm__ volatile(
+        "pusha\n"
+        "mov eax, esp\n"
+        "push eax\n"
+        "call syscall_dispatch\n"
+        "add esp, 4\n"
+        "popa\n"
+        "iret\n"
+        :
+        :
+        : "memory"
+    );
+}
+
+void init_syscall(void)
+{
+    idt_set_gate(0x80, (uint32_t) syscall_entry, 0xef);
+}
+
+void register_syscall(uint8_t num, syscall_handler_t handler)
+{
+    if (num < MAX_NUM_SYSCALL)
+    {
+        syscall_handlers[num] = handler;
+    }
+}
