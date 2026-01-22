@@ -37,6 +37,7 @@ typedef void (*irq_handler_t)(void);
 
 void mask_irq(uint8_t irq);
 void unmask_irq(uint8_t irq);
+void idt_set_gate(uint8_t idx, uint32_t handler, uint8_t interrupts_gate_flags);
 void init_interrupts(void);
 void register_irq_handler(uint8_t irq, irq_handler_t handler);
 
