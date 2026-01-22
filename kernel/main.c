@@ -1,6 +1,7 @@
 #include <kernel/console.h>
 #include <kernel/paging.h>
 #include <kernel/interrupts.h>
+#include <kernel/exceptions.h>
 #include <kernel/keyboard.h>
 
 int main()
@@ -12,6 +13,9 @@ int main()
     console_puts("Done\n");
     console_puts("Setting up CPU interrupts...");
     init_interrupts();
+    console_puts("Done\n");
+    console_puts("Setting up CPU exceptions...");
+    init_exceptions();
     console_puts("Done\n");
     console_puts("Initializing keyboard...");
     init_keyboard();

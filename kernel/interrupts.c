@@ -82,7 +82,7 @@ DECLARE_IRQ(13)
 DECLARE_IRQ(14)
 DECLARE_IRQ(15)
 
-static void idt_set_gate(uint8_t idx, uint32_t handler, uint8_t interrupts_gate_flags)
+void idt_set_gate(uint8_t idx, uint32_t handler, uint8_t interrupts_gate_flags)
 {
     idt[idx].offset_low = handler & 0xffff;
     idt[idx].selector = 0x08;
