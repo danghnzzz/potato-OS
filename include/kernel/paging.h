@@ -6,6 +6,7 @@
 #define PAGE_SIZE 4096
 #define PAGE_FLAG_PRESENT 0x1
 #define PAGE_FLAG_WRITABLE 0x2
+#define PAGE_FLAG_USER 0x4
 
 void enable_paging(void);
 
