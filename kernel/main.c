@@ -1,4 +1,5 @@
 #include <kernel/console.h>
+#include <kernel/gdt.h>
 #include <kernel/paging.h>
 #include <kernel/interrupts.h>
 #include <kernel/exceptions.h>
@@ -9,19 +10,22 @@ int main()
 {
     enable_console_cursor();
     console_puts("Hello, World!\n");
-    console_puts("Enabling memory paging...");
+    console_puts("Registering global descriptor table ... ");
+    init_gdt();
+    console_puts("Done\n");
+    console_puts("Enabling memory paging ... ");
     enable_paging();
     console_puts("Done\n");
-    console_puts("Setting up CPU interrupts...");
+    console_puts("Setting up CPU interrupts ... ");
     init_interrupts();
     console_puts("Done\n");
-    console_puts("Setting up CPU exceptions...");
+    console_puts("Setting up CPU exceptions ... ");
     init_exceptions();
     console_puts("Done\n");
-    console_puts("Setting up syscalls...");
+    console_puts("Setting up syscalls ... ");
     init_syscall();
     console_puts("Done\n");
-    console_puts("Initializing keyboard...");
+    console_puts("Initializing keyboard ... ");
     init_keyboard();
     console_puts("Done\n");
     for(;;);

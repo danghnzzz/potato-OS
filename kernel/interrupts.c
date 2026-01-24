@@ -43,7 +43,7 @@ void mask_irq(uint8_t irq)
 void unmask_irq(uint8_t irq)
 {
     uint16_t port = (irq < 8) ? 0x21 : 0xa1;
-    uint8_t value = inb(port) & ~ (1 << (irq & 0x7));
+    uint8_t value = inb(port) & ~(1 << (irq & 0x7));
     outb(port, value);
 }
 
