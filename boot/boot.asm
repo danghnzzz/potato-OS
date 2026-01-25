@@ -14,12 +14,4 @@ align 4
 section .text
 _start:
     cli
-    mov esp, stack
-    call main
-.hang:
-    hlt
-    jmp .hang
-
-section .bss
-resb 8192
-stack:
+    jmp main
