@@ -6,8 +6,19 @@
 #include <kernel/syscall.h>
 #include <kernel/keyboard.h>
 
+#define KERNEL_STACK_SIZE 8192
+
+static uint8_t kernel_stack[KERNEL_STACK_SIZE] __attribute__((aligned(16)));
+uint8_t *kernel_stack_top = kernel_stack + KERNEL_STACK_SIZE;
+
 int main()
 {
+    __asm__ volatile(
+        "mov esp, %0"
+        :
+        : "r"(kernel_stack_top)
+        : "memory"
+    );
     enable_console_cursor();
     console_puts("Hello, World!\n");
     console_puts("Registering global descriptor table ... ");
