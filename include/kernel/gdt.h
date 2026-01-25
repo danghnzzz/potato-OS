@@ -18,7 +18,7 @@ typedef struct __attribute__((packed))
     uint8_t base_high;
 } gdt_entry_t;
 
-#define GDT_ENTRIES 5
+#define GDT_ENTRIES 6
 #define GDT_KERNEL_CODE_SELECTOR 0x08
 #define GDT_KERNEL_DATA_SELECTOR 0x10
 #define GDT_USER_CODE_SELECTOR 0x18

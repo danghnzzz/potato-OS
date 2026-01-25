@@ -4,6 +4,7 @@
 #include <kernel/interrupts.h>
 #include <kernel/exceptions.h>
 #include <kernel/syscall.h>
+#include <kernel/tss.h>
 #include <kernel/keyboard.h>
 
 #define KERNEL_STACK_SIZE 8192
@@ -35,6 +36,9 @@ int main()
     console_puts("Done\n");
     console_puts("Setting up syscalls ... ");
     init_syscall();
+    console_puts("Done\n");
+    console_puts("Setting up task state segment ... ");
+    init_tss((uint32_t) kernel_stack_top);
     console_puts("Done\n");
     console_puts("Initializing keyboard ... ");
     init_keyboard();
