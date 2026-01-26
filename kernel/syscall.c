@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stddef.h>
 #include <kernel/console.h>
 #include <kernel/interrupts.h>
 #include <kernel/syscall.h>
@@ -10,7 +11,7 @@ static void syscall_dispatch(syscall_registers_t *regs)
     uint32_t num = regs->eax;
     if (num < MAX_NUM_SYSCALL && syscall_handlers[num])
     {
-        regs->eax = syscall_handlers[num](regs);
+        regs->eax = (uint32_t) syscall_handlers[num](regs);
         return;
     }
     regs->eax = (uint32_t) -1;
@@ -40,16 +41,17 @@ static void register_syscall(uint8_t num, syscall_handler_t handler)
     }
 }
 
-static uint32_t sys_write(syscall_registers_t *regs)
+static ssize_t sys_write(syscall_registers_t *regs)
 {
+    uint32_t fd  = regs->ebx;
     const char *buf = (const char *) regs->ecx;
-    uint32_t len = regs->edx;
-    if (!buf)
+    uint32_t count = regs->edx;
+    if ((fd != 1 && fd != 2) || !buf)
     {
-        return (uint32_t) -1;
+        return (ssize_t) -1;
     }
-    uint32_t written = 0;
-    for (; written < len; written++)
+    ssize_t written = 0;
+    for (; written < count; written++)
     {
         console_putc(buf[written]);
     }

@@ -36,24 +36,21 @@ void enable_paging(void)
     clear_page_directory();
     setup_kernel_first_page_identity_map();
     setup_user_first_page();
-    __asm__ volatile
-    (
+    __asm__ volatile(
         "mov cr3, %0"
         :
         : "r"(page_directory)
         : "memory"
     );
     uint32_t cr0;
-    __asm__ volatile
-    (
+    __asm__ volatile(
         "mov %0, cr0"
         : "=r"(cr0)
         :
         :
     );
     cr0 |= 0x80000000;
-    __asm__ volatile
-    (
+    __asm__ volatile(
         "mov cr0, %0"
         :
         : "r"(cr0)

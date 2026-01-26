@@ -1,6 +1,7 @@
 #ifndef SYSCALL_H
 #define SYSCALL_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 typedef struct
@@ -14,7 +15,7 @@ typedef struct
     uint32_t ecx;
     uint32_t eax;
 } syscall_registers_t;
-typedef uint32_t (*syscall_handler_t)(syscall_registers_t *regs);
+typedef ssize_t (*syscall_handler_t)(syscall_registers_t *regs);
 
 #define MAX_NUM_SYSCALL 256
 #define SYS_WRITE 0x04
