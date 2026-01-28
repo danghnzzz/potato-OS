@@ -9,7 +9,10 @@ ssize_t write(int fd, const void *buf, uint32_t count)
     __asm__ volatile(
         "int 0x80"
         : "=a" (written)
-        : "0" (SYS_WRITE), "b" (fd), "c" ((uint32_t) buf), "d" (count)
+        : "0" (SYS_WRITE),
+          "b" (fd),
+          "c" ((uint32_t) buf),
+          "d" (count)
         : "memory"
     );
     return written;

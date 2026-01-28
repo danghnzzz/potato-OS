@@ -1,6 +1,5 @@
 OBJ := \
 	./build/boot.o \
-	./build/lib.o \
 	./build/kernel.o
 TARGET := potatoOS
 
@@ -12,9 +11,6 @@ all: build_iso
 
 ./build/boot.o:
 	nasm -f elf32 -o ./build/boot.o ./boot/boot.asm
-
-./build/lib.o:
-	cd ./lib && make
 
 ./build/kernel.o:
 	cd ./kernel && make
