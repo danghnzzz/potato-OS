@@ -9,7 +9,7 @@ $(shell mkdir -p ../build/lib)
 all: $(LIB)
 
 ../build/lib/%.o: ./%.c
-	gcc -m32 -masm=intel -ffreestanding -fno-pie -fno-pic -fno-stack-protector -fno-builtin -c -I ../include -o $@ $<
+	gcc -m32 -masm=intel -ffreestanding -fno-pie -fno-pic -fno-stack-protector -fno-builtin -nostdlib -I ../include -c -o $@ $<
 
 $(LIB): $(OBJ)
 	ar rcs $@ $(OBJ)

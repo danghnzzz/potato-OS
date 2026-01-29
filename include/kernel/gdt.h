@@ -21,8 +21,8 @@ typedef struct __attribute__((packed))
 #define GDT_ENTRIES 6
 #define GDT_KERNEL_CODE_SELECTOR 0x08
 #define GDT_KERNEL_DATA_SELECTOR 0x10
-#define GDT_USER_CODE_SELECTOR 0x18
-#define GDT_USER_DATA_SELECTOR 0x20
+#define GDT_USER_CODE_SELECTOR (0x18 | 0x3)
+#define GDT_USER_DATA_SELECTOR (0x20 | 0x3)
 #define GDT_TSS_SELECTOR 0x28
 
 void gdt_set_entry(uint8_t idx, uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity);

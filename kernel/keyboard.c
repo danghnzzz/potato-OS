@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <io.h>
+#include <kernel/io.h>
 #include <kernel/console.h>
 #include <kernel/interrupts.h>
 #include <kernel/keyboard.h>

@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <io.h>
+#include <kernel/io.h>
 #include <kernel/console.h>
 
 static uint16_t cursor_x = 0;

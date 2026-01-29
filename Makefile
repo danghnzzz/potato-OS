@@ -1,6 +1,7 @@
 OBJ := \
 	./build/boot.o \
-	./build/kernel.o
+	./build/kernel.o \
+	./build/init/init.user.o
 TARGET := potatoOS
 
 .PHONY: all build_iso clean
@@ -14,6 +15,9 @@ all: build_iso
 
 ./build/kernel.o:
 	cd ./kernel && make
+
+./build/init/init.user.o:
+	cd ./init && make
 
 ./build/$(TARGET).elf: $(OBJ)
 	ld -m elf_i386 -T ./linker.ld -o ./build/$(TARGET).elf $(OBJ)
