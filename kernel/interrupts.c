@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <io.h>
+#include <kernel/io.h>
 #include <kernel/interrupts.h>
 
 static idt_entry idt[IDT_ENTRIES];
