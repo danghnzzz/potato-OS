@@ -3,6 +3,7 @@
 #include <kernel/console.h>
 #include <kernel/interrupts.h>
 #include <kernel/syscall.h>
+#include <kernel/tty.h>
 
 static syscall_handler_t syscall_handlers[MAX_NUM_SYSCALL];
 
@@ -41,6 +42,18 @@ static void register_syscall(uint8_t num, syscall_handler_t handler)
     }
 }
 
+static ssize_t sys_read(syscall_registers_t *regs)
+{
+    uint32_t fd  = regs->ebx;
+    char *buf = (char *) regs->ecx;
+    uint32_t count = regs->edx;
+    if (fd != 0)
+    {
+        return (ssize_t) -1;
+    }
+    return tty_read(buf, count);
+}
+
 static ssize_t sys_write(syscall_registers_t *regs)
 {
     uint32_t fd  = regs->ebx;
@@ -50,16 +63,12 @@ static ssize_t sys_write(syscall_registers_t *regs)
     {
         return (ssize_t) -1;
     }
-    ssize_t written = 0;
-    for (; written < count; written++)
-    {
-        console_putc(buf[written]);
-    }
-    return written;
+    return tty_write(buf, count);
 }
 
 void init_syscall(void)
 {
     idt_set_gate(0x80, (uint32_t) syscall_entry, 0xef);
+    register_syscall(SYS_READ, sys_read);
     register_syscall(SYS_WRITE, sys_write);
 }
