@@ -102,7 +102,8 @@ uint8_t console_puts(const char *s)
     uint8_t str_len = 0;
     while (*s)
     {
-        console_putc(*s++);
+        console_putc(*s);
+        s++;
         str_len++;
     }
     return str_len;

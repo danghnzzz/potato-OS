@@ -23,7 +23,7 @@ static void enter_user_space(uint32_t entry_point)
     uint32_t eflags;
     __asm__ volatile(
         "pushf\n"
-        "pop %0"
+        "pop %0\n"
         : "=r"(eflags)
         :
         : "memory"
