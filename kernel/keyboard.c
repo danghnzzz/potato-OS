@@ -2,6 +2,7 @@
 #include <kernel/io.h>
 #include <kernel/console.h>
 #include <kernel/interrupts.h>
+#include <kernel/tty.h>
 #include <kernel/keyboard.h>
 
 static const char scancode_map[128] =
@@ -19,10 +20,7 @@ static void keyboard_irq_handler(void)
     if (!(scancode & 0x80) && scancode < sizeof(scancode_map))
     {
         char c = scancode_map[scancode];
-        if (c)
-        {
-            console_putc(c);
-        }
+        tty_queue_putc(c);
     }
 }
 
