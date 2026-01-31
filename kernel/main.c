@@ -5,6 +5,7 @@
 #include <kernel/paging.h>
 #include <kernel/interrupts.h>
 #include <kernel/exceptions.h>
+#include <kernel/timer.h>
 #include <kernel/syscall.h>
 #include <kernel/tty.h>
 #include <kernel/tss.h>
@@ -73,6 +74,9 @@ int main()
     console_puts("Done\n");
     console_puts("Setting up CPU exceptions ... ");
     init_exceptions();
+    console_puts("Done\n");
+    console_puts("Initializing PIT timer ... ");
+    init_timer();
     console_puts("Done\n");
     console_puts("Setting up syscalls ... ");
     init_syscall();
