@@ -25,4 +25,26 @@ static void outb(uint16_t port, uint8_t val)
     );
 }
 
+static uint16_t inw(uint16_t port)
+{
+    uint16_t val;
+    __asm__ volatile(
+        "in ax, dx"
+        : "=a"(val)
+        : "d"(port)
+        :
+    );
+    return val;
+}
+
+static void outw(uint16_t port, uint16_t val)
+{
+    __asm__ volatile(
+        "out dx, ax"
+        :
+        : "d"(port), "a"(val)
+        :
+    );
+}
+
 #endif
