@@ -16,7 +16,7 @@ static const char scancode_map[128] =
 
 static void keyboard_irq_handler(void)
 {
-    uint8_t scancode = inb(0x60);
+    uint8_t scancode = inb(KEYBOARD_CONTROLLER_DATA_REGISTER);
     if (!(scancode & 0x80) && scancode < sizeof(scancode_map))
     {
         char c = scancode_map[scancode];

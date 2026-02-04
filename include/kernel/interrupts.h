@@ -18,6 +18,10 @@ typedef struct __attribute__((packed))
 } idt_entry;
 typedef void (*irq_handler_t)(void);
 
+#define MASTER_PIC_COMMAND_REGISTER 0x20
+#define MASTER_PIC_DATA_REGISTER 0x21
+#define SLAVE_PIC_COMMAND_REGISTER 0xa0
+#define SLAVE_PIC_DATA_REGISTER 0xa0
 #define IDT_ENTRIES 256
 #define DECLARE_IRQ(n) \
     __attribute__((naked)) static void irq##n(void) \

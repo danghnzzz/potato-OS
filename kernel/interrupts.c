@@ -7,18 +7,18 @@ static irq_handler_t irq_handlers[16];
 
 static void pic_remap(void)
 {
-    uint8_t a1 = inb(0x21);
-    uint8_t a2 = inb(0xa1);
-    outb(0x20, 0x11);
-    outb(0xa0, 0x11);
-    outb(0x21, 0x20);
-    outb(0xa1, 0x28);
-    outb(0x21, 0x4);
-    outb(0xa1, 0x2);
-    outb(0x21, 0x1);
-    outb(0xa1, 0x1);
-    outb(0x21, a1);
-    outb(0xa1, a2);
+    uint8_t a1 = inb(MASTER_PIC_DATA_REGISTER);
+    uint8_t a2 = inb(SLAVE_PIC_DATA_REGISTER);
+    outb(MASTER_PIC_COMMAND_REGISTER, 0x11);
+    outb(SLAVE_PIC_COMMAND_REGISTER, 0x11);
+    outb(MASTER_PIC_DATA_REGISTER, 0x20);
+    outb(SLAVE_PIC_DATA_REGISTER, 0x28);
+    outb(MASTER_PIC_DATA_REGISTER, 0x4);
+    outb(SLAVE_PIC_DATA_REGISTER, 0x2);
+    outb(MASTER_PIC_DATA_REGISTER, 0x1);
+    outb(SLAVE_PIC_DATA_REGISTER, 0x1);
+    outb(MASTER_PIC_DATA_REGISTER, a1);
+    outb(SLAVE_PIC_DATA_REGISTER, a2);
 }
 
 static void init_idt(void)
@@ -35,14 +35,14 @@ static void init_idt(void)
 
 void mask_irq(uint8_t irq)
 {
-    uint16_t port = (irq < 8) ? 0x21 : 0xa1;
+    uint16_t port = (irq < 8) ? MASTER_PIC_DATA_REGISTER : SLAVE_PIC_DATA_REGISTER;
     uint8_t value = inb(port) | (1 << (irq & 0x7));
     outb(port, value);
 }
 
 void unmask_irq(uint8_t irq)
 {
-    uint16_t port = (irq < 8) ? 0x21 : 0xa1;
+    uint16_t port = (irq < 8) ? MASTER_PIC_DATA_REGISTER : SLAVE_PIC_DATA_REGISTER;
     uint8_t value = inb(port) & ~(1 << (irq & 0x7));
     outb(port, value);
 }
@@ -51,9 +51,9 @@ static void pic_send_eoi(uint8_t irq)
 {
     if (irq >= 8)
     {
-        outb(0xa0, 0x20);
+        outb(SLAVE_PIC_COMMAND_REGISTER, 0x20);
     }
-    outb(0x20, 0x20);
+    outb(MASTER_PIC_COMMAND_REGISTER, 0x20);
 }
 
 void interrupts_dispatch(uint8_t irq)
