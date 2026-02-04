@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define VGA_CRTC_INDEX_REGISTER 0x3d4
+#define VGA_CRTC_DATA_REGISTER 0x3d5
 #define VGA_ADDRESS ((volatile uint16_t *) 0xb8000)
 #define CONSOLE_WIDTH 80
 #define CONSOLE_HEIGHT 25

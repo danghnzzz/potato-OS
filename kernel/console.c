@@ -8,25 +8,25 @@ static uint16_t cursor_y = 0;
 void set_console_cursor_pos(void)
 {
     uint16_t pos = cursor_y * CONSOLE_WIDTH + cursor_x;
-    outb(0x3d4, 0x0f);
-    outb(0x3d5, (uint8_t) (pos & 0xff));
-    outb(0x3d4, 0x0e);
-    outb(0x3d5, (uint8_t) (pos >> 8));
+    outb(VGA_CRTC_INDEX_REGISTER, 0x0f);
+    outb(VGA_CRTC_DATA_REGISTER, (uint8_t) (pos & 0xff));
+    outb(VGA_CRTC_INDEX_REGISTER, 0x0e);
+    outb(VGA_CRTC_DATA_REGISTER, (uint8_t) (pos >> 8));
 }
 
 void enable_console_cursor(void)
 {
-    outb(0x3d4, 0x0a);
-    outb(0x3d5, (inb(0x3d5) & 0xc0 | CURSOR_START));
-    outb(0x3d4, 0x0b);
-    outb(0x3d5, (inb(0x3d5) & 0xe0 | CURSOR_END));
+    outb(VGA_CRTC_INDEX_REGISTER, 0x0a);
+    outb(VGA_CRTC_DATA_REGISTER, (inb(VGA_CRTC_DATA_REGISTER) & 0xc0 | CURSOR_START));
+    outb(VGA_CRTC_INDEX_REGISTER, 0x0b);
+    outb(VGA_CRTC_DATA_REGISTER, (inb(VGA_CRTC_DATA_REGISTER) & 0xe0 | CURSOR_END));
     set_console_cursor_pos();
 }
 
 void disable_console_cursor(void)
 {
-    outb(0x3d4, 0x0a);
-    outb(0x3d5, 0x20);
+    outb(VGA_CRTC_INDEX_REGISTER, 0x0a);
+    outb(VGA_CRTC_DATA_REGISTER, 0x20);
 }
 
 void console_reset(void)
