@@ -47,4 +47,26 @@ static void outw(uint16_t port, uint16_t val)
     );
 }
 
+static uint32_t inl(uint16_t port)
+{
+    uint32_t val;
+    __asm__ volatile(
+        "in eax, dx"
+        : "=a"(val)
+        : "d"(port)
+        :
+    );
+    return val;
+}
+
+static void outl(uint16_t port, uint32_t val)
+{
+    __asm__ volatile(
+        "out dx, eax"
+        :
+        : "d"(port), "a"(val)
+        :
+    );
+}
+
 #endif
