@@ -17,7 +17,7 @@ typedef struct
 } syscall_registers_t;
 typedef ssize_t (*syscall_handler_t)(syscall_registers_t *regs);
 
-#define MAX_NUM_SYSCALL 256
+#define SYSCALL_HANDLER_ENTRIES 256
 #define SYS_READ 0x03
 #define SYS_WRITE 0x04
 
