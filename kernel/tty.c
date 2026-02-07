@@ -56,7 +56,7 @@ void init_tty(void)
     console_puts("Done\n");
 }
 
-void tty_queue_putc(char c)
+void tty_putc(char c)
 {
     if (!c)
     {

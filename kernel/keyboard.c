@@ -20,7 +20,7 @@ static void keyboard_irq_handler(void)
     if (!(scancode & 0x80) && scancode < sizeof(scancode_map))
     {
         char c = scancode_map[scancode];
-        tty_queue_putc(c);
+        tty_putc(c);
     }
 }
 
