@@ -3,4 +3,5 @@ build/
 *.a
 *.elf
 *.iso
+*.img
 *.log

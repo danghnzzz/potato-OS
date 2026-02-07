@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <kernel/gdt.h>
 #include <kernel/tss.h>
+#include <kernel/console.h>
 
 static tss_entry_t tss __attribute__((aligned(16)));
 
@@ -64,10 +65,12 @@ static void ltss(void)
 
 void init_tss(uint32_t stack)
 {
+    console_puts("Setting up task state segment ... ");
     init_tss_entry();
     tss.ss0 = GDT_KERNEL_DATA_SELECTOR;
     tss.esp0 = stack;
     tss.iopb = sizeof(tss_entry_t);
     gdt_set_tss_entry();
     ltss();
+    console_puts("Done\n");
 }

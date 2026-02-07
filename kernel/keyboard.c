@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <kernel/io.h>
-#include <kernel/console.h>
 #include <kernel/interrupts.h>
 #include <kernel/tty.h>
 #include <kernel/keyboard.h>
+#include <kernel/console.h>
 
 static const char scancode_map[128] =
 {
@@ -26,6 +26,8 @@ static void keyboard_irq_handler(void)
 
 void init_keyboard(void)
 {
+    console_puts("Initializing keyboard ... ");
     register_irq_handler(1, keyboard_irq_handler);
     unmask_irq(1);
+    console_puts("Done\n");
 }
