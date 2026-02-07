@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <kernel/paging.h>
+#include <kernel/console.h>
 
 static uintptr_t page_directory[PAGE_DIRECTORY_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
 static uintptr_t kernel_page_table[PAGE_TABLE_ENTRIES] __attribute__((aligned(PAGE_SIZE)));
@@ -33,6 +34,7 @@ static void setup_user_first_page(void)
 
 void enable_paging(void)
 {
+    console_puts("Enabling memory paging ... ");
     clear_page_directory();
     setup_kernel_first_page_identity_map();
     setup_user_first_page();
@@ -56,4 +58,5 @@ void enable_paging(void)
         : "r"(cr0)
         : "memory"
     );
+    console_puts("Done\n");
 }

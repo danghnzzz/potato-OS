@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <kernel/io.h>
 #include <kernel/interrupts.h>
+#include <kernel/console.h>
 
 static idt_entry idt[IDT_ENTRIES];
 static irq_handler_t irq_handlers[16];
@@ -152,12 +153,14 @@ static void enable_interrupts(void)
 
 void init_interrupts(void)
 {
+    console_puts("Setting up CPU interrupts ... ");
     pic_remap();
     init_idt();
     install_irq_gates();
     lock_irqs();
     lidt(idt, sizeof(idt));
     enable_interrupts();
+    console_puts("Done\n");
 }
 
 void register_irq_handler(uint8_t irq, irq_handler_t handler)

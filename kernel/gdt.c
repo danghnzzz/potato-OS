@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <kernel/gdt.h>
+#include <kernel/console.h>
 
 static gdt_entry_t gdt[GDT_ENTRIES] __attribute__((aligned(8)));
 
@@ -46,6 +47,7 @@ static void reload_segment_registers(void)
 
 void init_gdt(void)
 {
+    console_puts("Registering global descriptor table ... ");
     gdt_set_entry(0, 0, 0, 0, 0);
     gdt_set_entry(1, 0x0, 0xfffff, 0x9a, 0xcf);
     gdt_set_entry(2, 0x0, 0xfffff, 0x92, 0xcf);
@@ -53,4 +55,5 @@ void init_gdt(void)
     gdt_set_entry(4, 0x0, 0xfffff, 0xf2, 0xcf);
     lgdt(gdt, sizeof(gdt));
     reload_segment_registers();
+    console_puts("Done\n");
 }

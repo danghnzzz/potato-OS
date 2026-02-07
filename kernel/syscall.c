@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <stddef.h>
-#include <kernel/console.h>
 #include <kernel/interrupts.h>
 #include <kernel/syscall.h>
 #include <kernel/tty.h>
+#include <kernel/console.h>
 
 static syscall_handler_t syscall_handlers[MAX_NUM_SYSCALL];
 
@@ -68,7 +68,9 @@ static ssize_t sys_write(syscall_registers_t *regs)
 
 void init_syscall(void)
 {
+    console_puts("Setting up syscalls ... ");
     idt_set_gate(0x80, (uint32_t) syscall_entry, 0xef);
     register_syscall(SYS_READ, sys_read);
     register_syscall(SYS_WRITE, sys_write);
+    console_puts("Done\n");
 }

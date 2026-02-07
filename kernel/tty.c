@@ -50,8 +50,10 @@ static inline char tty_queue_pop_char(void)
 
 void init_tty(void)
 {
+    console_puts("Setting up TTY ... ");
     tty_queue_head = 0;
     tty_queue_tail = 0;
+    console_puts("Done\n");
 }
 
 void tty_queue_putc(char c)

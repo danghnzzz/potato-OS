@@ -13,10 +13,12 @@ static void timer_irq_handler(void)
 
 void init_timer()
 {
+    console_puts("Initializing PIT timer ... ");
     uint32_t ticks_per_int = PIT_BASE_FREQUENCY / TIMER_HZ;
     outb(PIT_CONTROL_REGISTER, 0x36);
     outb(PIT_CHANNEL_0_DATA_REGISTER, (uint8_t) (ticks_per_int & 0xff));
     outb(PIT_CHANNEL_0_DATA_REGISTER, (uint8_t) ((ticks_per_int >> 8) & 0xff));
     register_irq_handler(0, timer_irq_handler);
     unmask_irq(0);
+    console_puts("Done\n");
 }

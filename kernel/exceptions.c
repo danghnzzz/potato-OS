@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <kernel/interrupts.h>
 #include <kernel/exceptions.h>
+#include <kernel/console.h>
 
 static exception_handler_t exception_handlers[32];
 
@@ -83,7 +84,9 @@ static void install_exception_gates(void)
 
 void init_exceptions(void)
 {
+    console_puts("Setting up CPU exceptions ... ");
     install_exception_gates();
+    console_puts("Done\n");
 }
 
 void register_exception_handler(uint8_t exc, exception_handler_t handler)
