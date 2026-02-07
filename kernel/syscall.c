@@ -5,12 +5,12 @@
 #include <kernel/tty.h>
 #include <kernel/console.h>
 
-static syscall_handler_t syscall_handlers[MAX_NUM_SYSCALL];
+static syscall_handler_t syscall_handlers[SYSCALL_HANDLER_ENTRIES];
 
 static void syscall_dispatch(syscall_registers_t *regs)
 {
     uint32_t num = regs->eax;
-    if (num < MAX_NUM_SYSCALL && syscall_handlers[num])
+    if (num < SYSCALL_HANDLER_ENTRIES && syscall_handlers[num])
     {
         regs->eax = (uint32_t) syscall_handlers[num](regs);
         return;
@@ -36,7 +36,7 @@ __attribute__((naked)) static void syscall_entry(void)
 
 static void register_syscall(uint8_t num, syscall_handler_t handler)
 {
-    if (num < MAX_NUM_SYSCALL)
+    if (num < SYSCALL_HANDLER_ENTRIES)
     {
         syscall_handlers[num] = handler;
     }
