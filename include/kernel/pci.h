@@ -17,13 +17,11 @@ static inline uint32_t pci_addr(uint8_t bus, uint8_t device, uint8_t func, uint8
         (offset & 0xfc)
     );
 }
-
 static inline uint32_t pci_read32(uint32_t addr)
 {
     outl(PCI_CFG_ADDR_REGISTER, addr);
     return inl(PCI_CFG_DATA_REGISTER);
 }
-
 static inline void pci_write32(uint32_t addr, uint32_t val)
 {
     outl(PCI_CFG_ADDR_REGISTER, addr);

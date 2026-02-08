@@ -4,6 +4,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define SYSCALL_HANDLER_ENTRIES 256
+#define SYS_READ 0x03
+#define SYS_WRITE 0x04
+
 typedef struct
 {
     uint32_t edi;
@@ -16,10 +20,6 @@ typedef struct
     uint32_t eax;
 } syscall_registers_t;
 typedef ssize_t (*syscall_handler_t)(syscall_registers_t *regs);
-
-#define SYSCALL_HANDLER_ENTRIES 256
-#define SYS_READ 0x03
-#define SYS_WRITE 0x04
 
 void init_syscall(void);
 
