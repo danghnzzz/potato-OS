@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 
-typedef void (*exception_handler_t)(uint8_t exc, uint32_t err_code);
-
 #define DECLARE_EXCEPTION_NOERR(n) \
     __attribute__((naked)) static void exception##n(void) \
     { \
@@ -38,6 +36,8 @@ typedef void (*exception_handler_t)(uint8_t exc, uint32_t err_code);
             : \
         ); \
     }
+
+typedef void (*exception_handler_t)(uint8_t exc, uint32_t err_code);
 
 void init_exceptions(void);
 void register_exception_handler(uint8_t exc, exception_handler_t handler);

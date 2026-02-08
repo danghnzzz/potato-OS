@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define GDT_TSS_SELECTOR 0x28
+
 typedef struct __attribute__((packed))
 {
     uint16_t link;
@@ -44,8 +46,6 @@ typedef struct __attribute__((packed))
     uint16_t reserved11;
     uint16_t iopb;
 } tss_entry_t;
-
-#define GDT_TSS_SELECTOR 0x28
 
 void init_tss(uint32_t stack);
 void tss_set_kernel_stack(uint32_t esp);
