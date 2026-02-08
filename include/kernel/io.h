@@ -14,7 +14,6 @@ static uint8_t inb(uint16_t port)
     );
     return val;
 }
-
 static void outb(uint16_t port, uint8_t val)
 {
     __asm__ volatile(
@@ -24,7 +23,6 @@ static void outb(uint16_t port, uint8_t val)
         :
     );
 }
-
 static uint16_t inw(uint16_t port)
 {
     uint16_t val;
@@ -36,7 +34,6 @@ static uint16_t inw(uint16_t port)
     );
     return val;
 }
-
 static void outw(uint16_t port, uint16_t val)
 {
     __asm__ volatile(
@@ -46,7 +43,6 @@ static void outw(uint16_t port, uint16_t val)
         :
     );
 }
-
 static uint32_t inl(uint16_t port)
 {
     uint32_t val;
@@ -58,7 +54,6 @@ static uint32_t inl(uint16_t port)
     );
     return val;
 }
-
 static void outl(uint16_t port, uint32_t val)
 {
     __asm__ volatile(
