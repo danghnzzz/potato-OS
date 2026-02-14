@@ -4,6 +4,7 @@
 
 static uint16_t cursor_x = 0;
 static uint16_t cursor_y = 0;
+static const char *HEX_DIGITS = "0123456789abcdef";
 
 void set_console_cursor_pos(void)
 {
@@ -63,8 +64,12 @@ void console_scroll(void)
     cursor_y = CONSOLE_HEIGHT - 1;
 }
 
-void console_putc(char c)
+uint8_t console_putc(char c)
 {
+    if (!c)
+    {
+        return 0;
+    }
     if (c == '\n')
     {
         cursor_x = 0;
@@ -95,16 +100,58 @@ void console_putc(char c)
     }
     console_scroll();
     set_console_cursor_pos();
+    return 1;
 }
 
 uint8_t console_puts(const char *s)
 {
-    uint8_t str_len = 0;
+    uint8_t written = 0;
     while (*s)
     {
-        console_putc(*s);
+        written += console_putc(*s);
         s++;
-        str_len++;
     }
-    return str_len;
+    return written;
+}
+
+uint8_t console_put_hex8(uint8_t val, uint8_t prefix)
+{
+    uint8_t written = 0;
+    if (prefix)
+    {
+        console_putc('0');
+        console_putc('x');
+        written += 2;
+    }
+    written += console_putc(HEX_DIGITS[(val >> 4) & 0xf]);
+    written += console_putc(HEX_DIGITS[val & 0xf]);
+    return written;
+}
+
+uint8_t console_put_hex16(uint16_t val, uint8_t prefix)
+{
+    uint8_t written = 0;
+    if (prefix)
+    {
+        console_putc('0');
+        console_putc('x');
+        written += 2;
+    }
+    written += console_put_hex8((uint8_t) (val >> 8), 0);
+    written += console_put_hex8((uint8_t) val, 0);
+    return written;
+}
+
+uint8_t console_put_hex32(uint32_t val, uint8_t prefix)
+{
+    uint8_t written = 0;
+    if (prefix)
+    {
+        console_putc('0');
+        console_putc('x');
+        written += 2;
+    }
+    written += console_put_hex16((uint16_t) (val >> 16), 0);
+    written += console_put_hex16((uint16_t) val, 0);
+    return written;
 }
