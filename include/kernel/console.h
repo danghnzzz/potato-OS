@@ -8,7 +8,7 @@
 #define VGA_ADDRESS ((volatile uint16_t *) 0xb8000)
 #define CONSOLE_WIDTH 80
 #define CONSOLE_HEIGHT 25
-#define VGA_ATTR 0x0f
+#define VGA_ATTR 0xf
 #define CURSOR_START 0x0
 #define CURSOR_END 0xf
 

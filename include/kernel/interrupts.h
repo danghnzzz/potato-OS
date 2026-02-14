@@ -28,7 +28,7 @@ typedef struct __attribute__((packed))
 {
     uint16_t limit;
     uint32_t base;
-} idt_descriptor;
+} idt_descriptor_t;
 typedef struct __attribute__((packed))
 {
     uint16_t offset_low;
