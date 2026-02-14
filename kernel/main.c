@@ -3,6 +3,7 @@
 #include <kernel/console.h>
 #include <kernel/gdt.h>
 #include <kernel/paging.h>
+#include <kernel/pci.h>
 #include <kernel/interrupts.h>
 #include <kernel/exceptions.h>
 #include <kernel/syscall.h>
@@ -65,6 +66,7 @@ int main()
     console_puts("Hello, World!\n");
     init_gdt();
     enable_paging();
+    scan_pci();
     init_interrupts();
     init_exceptions();
     init_syscall();
