@@ -17,7 +17,10 @@ void enable_console_cursor(void);
 void disable_console_cursor(void);
 void console_reset(void);
 void console_scroll(void);
-void console_putc(char c);
+uint8_t console_putc(char c);
 uint8_t console_puts(const char *s);
+uint8_t console_put_hex8(uint8_t val, uint8_t prefix);
+uint8_t console_put_hex16(uint16_t val, uint8_t prefix);
+uint8_t console_put_hex32(uint32_t val, uint8_t prefix);
 
 #endif
