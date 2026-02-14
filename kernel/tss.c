@@ -7,7 +7,7 @@ static tss_entry_t tss __attribute__((aligned(16)));
 
 static void gdt_set_tss_entry()
 {
-    gdt_set_entry(5, (uint32_t) &tss, sizeof(tss_entry_t) - 1, 0x89, 0x00);
+    gdt_set_entry(5, (uint32_t) &tss, sizeof(tss_entry_t) - 1, 0x89, 0x0);
 }
 
 static void init_tss_entry()

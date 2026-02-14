@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define GDT_ENTRIES 6
-#define GDT_KERNEL_CODE_SELECTOR 0x08
+#define GDT_KERNEL_CODE_SELECTOR 0x8
 #define GDT_KERNEL_DATA_SELECTOR 0x10
 #define GDT_USER_CODE_SELECTOR (0x18 | 0x3)
 #define GDT_USER_DATA_SELECTOR (0x20 | 0x3)
@@ -14,7 +14,7 @@ typedef struct __attribute__((packed))
 {
     uint16_t limit;
     uint32_t base;
-} gdt_descriptor;
+} gdt_descriptor_t;
 typedef struct __attribute__((packed))
 {
     uint16_t limit_low;

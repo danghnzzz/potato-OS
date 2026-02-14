@@ -16,7 +16,7 @@ void gdt_set_entry(uint8_t idx, uint32_t base, uint32_t limit, uint8_t access, u
 
 static void lgdt(void *base, uint16_t size)
 {
-    gdt_descriptor desc = {
+    gdt_descriptor_t desc = {
         .limit = size - 1,
         .base = (uint32_t) base
     };

@@ -86,7 +86,7 @@ DECLARE_IRQ(15)
 void idt_set_gate(uint8_t idx, uint32_t handler, uint8_t interrupts_gate_flags)
 {
     idt[idx].offset_low = handler & 0xffff;
-    idt[idx].selector = 0x08;
+    idt[idx].selector = 0x8;
     idt[idx].reserved = 0;
     idt[idx].type_attr = interrupts_gate_flags;
     idt[idx].offset_high = (handler >> 16) & 0xffff;
@@ -134,7 +134,7 @@ static void lock_irqs(void)
 
 static void lidt(void *base, uint16_t size)
 {
-    idt_descriptor desc = {
+    idt_descriptor_t desc = {
         .limit = size - 1,
         .base = (uint32_t) base
     };

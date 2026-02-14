@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 #define SYSCALL_HANDLER_ENTRIES 256
-#define SYS_READ 0x03
-#define SYS_WRITE 0x04
+#define SYS_READ 0x3
+#define SYS_WRITE 0x4
 
 typedef struct
 {
