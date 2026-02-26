@@ -6,12 +6,12 @@ static gdt_entry_t gdt[GDT_ENTRIES] __attribute__((aligned(8)));
 
 void gdt_set_entry(uint8_t idx, uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity)
 {
-    gdt[idx].limit_low = limit & 0xffff;
-    gdt[idx].base_low = base & 0xffff;
-    gdt[idx].base_middle = (base >> 16) & 0xff;
+    gdt[idx].limit_low = (uint16_t) limit;
+    gdt[idx].base_low = (uint16_t) base;
+    gdt[idx].base_middle = (uint8_t) (base >> 16);
     gdt[idx].access = access;
     gdt[idx].granularity = ((limit >> 16) & 0xf) | (granularity & 0xf0);
-    gdt[idx].base_high = (base >> 24) & 0xff;
+    gdt[idx].base_high = (uint8_t) (base >> 24);
 }
 
 static void lgdt(void *base, uint16_t size)

@@ -13,14 +13,14 @@ static uint8_t pci_read_device(uint8_t bus, uint8_t device, uint8_t func, pci_cf
     }
     uint32_t cmd_stat = pci_read32(pci_addr(bus, device, func, 0x4));
     uint32_t rev_cls = pci_read32(pci_addr(bus, device, func, 0x8));
-    cfg->vendor_id = (uint16_t) (vendor_device & 0xffff);
+    cfg->vendor_id = (uint16_t) vendor_device;
     cfg->device_id = (uint16_t) (vendor_device >> 16);
-    cfg->command = (uint16_t) (cmd_stat & 0xffff);
+    cfg->command = (uint16_t) cmd_stat;
     cfg->status = (uint16_t) (cmd_stat >> 16);
-    cfg->revision = (uint8_t) (rev_cls & 0xff);
-    cfg->prog_if = (uint8_t) ((rev_cls >> 8) & 0xff);
-    cfg->sub_class = (uint8_t) ((rev_cls >> 16) & 0xff);
-    cfg->base_class = (uint8_t) ((rev_cls >> 24) & 0xff);
+    cfg->revision = (uint8_t) rev_cls;
+    cfg->prog_if = (uint8_t) (rev_cls >> 8);
+    cfg->sub_class = (uint8_t) (rev_cls >> 16);
+    cfg->base_class = (uint8_t) (rev_cls >> 24);
     for (uint8_t i = 0; i < 6; i++)
     {
         cfg->bar[i] = pci_read32(pci_addr(bus, device, func, (uint8_t) (0x10 + i * 4)));
@@ -64,6 +64,10 @@ void scan_pci(void)
                 console_puts("\n");
             }
         }
+    }
+    if (pci_device_count == 0)
+    {
+        console_puts("  No PCI found\n");
     }
     console_puts("Done\n");
 }

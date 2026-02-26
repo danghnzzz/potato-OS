@@ -10,7 +10,7 @@ void set_console_cursor_pos(void)
 {
     uint16_t pos = cursor_y * CONSOLE_WIDTH + cursor_x;
     outb(VGA_CRTC_INDEX_REGISTER, 0xf);
-    outb(VGA_CRTC_DATA_REGISTER, (uint8_t) (pos & 0xff));
+    outb(VGA_CRTC_DATA_REGISTER, (uint8_t) pos);
     outb(VGA_CRTC_INDEX_REGISTER, 0xe);
     outb(VGA_CRTC_DATA_REGISTER, (uint8_t) (pos >> 8));
 }
