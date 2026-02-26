@@ -9,5 +9,6 @@
 #define TIMER_HZ 100
 
 void init_timer(void);
+uint32_t get_current_ticks();
 
 #endif

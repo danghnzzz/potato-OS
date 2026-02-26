@@ -22,3 +22,8 @@ void init_timer()
     unmask_irq(0);
     console_puts("Done\n");
 }
+
+uint32_t get_current_ticks()
+{
+    return timer_ticks;
+}
