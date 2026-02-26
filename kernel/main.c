@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <stddef.h>
+#include <string.h>
 #include <kernel/console.h>
 #include <kernel/gdt.h>
 #include <kernel/paging.h>
@@ -10,6 +10,7 @@
 #include <kernel/tty.h>
 #include <kernel/tss.h>
 #include <kernel/timer.h>
+#include <kernel/disk.h>
 #include <kernel/keyboard.h>
 
 extern uint8_t *user_stack_top;
@@ -73,6 +74,7 @@ int main()
     init_tty();
     init_tss((uint32_t) kernel_stack_top);
     init_timer();
+    init_disk();
     init_keyboard();
     console_puts("Entering user-space ...\n");
     enter_user_space((uint32_t) user_entry_point);
