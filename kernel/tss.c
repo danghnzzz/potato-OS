@@ -55,10 +55,9 @@ static void init_tss_entry()
 static void ltss(void)
 {
     __asm__ volatile(
-        "mov ax, %0\n"
-        "ltr ax\n"
+        "ltr %0\n"
         :
-        : "i"(GDT_TSS_SELECTOR)
+        : "r"((uint16_t) GDT_TSS_SELECTOR)
         : "ax"
     );
 }
