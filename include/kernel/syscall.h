@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #define SYSCALL_HANDLER_ENTRIES 256
+#define SYS_EXIT 0x1
 #define SYS_READ 0x3
 #define SYS_WRITE 0x4
 
