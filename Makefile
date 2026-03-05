@@ -38,15 +38,15 @@ build_img: ./build/$(TARGET).elf
     	mkpart primary 1MiB 100% \
     	set 1 boot on
 	LOOP=$$(sudo losetup --find --partscan --show $(TARGET).img); \
-	sudo mkfs.minix -1 -n 30 "$${LOOP}p1"; \
-	sudo mount -t minix "$${LOOP}p1" ./mnt/; \
-	sudo mkdir -p ./mnt/boot/grub; \
-	sudo cp ./build/$(TARGET).elf ./mnt/boot/$(TARGET).elf; \
-	sudo cp ./grub/grub.cfg ./mnt/boot/grub/grub.cfg; \
-	sudo grub-install --target=i386-pc --boot-directory=./mnt/boot --modules="part_msdos minix" --no-floppy "$$LOOP"; \
-	sync; \
-	sudo umount ./mnt/; \
-	sudo losetup -d "$$LOOP"
+		sudo mkfs.minix -1 -n 30 "$${LOOP}p1"; \
+		sudo mount -t minix "$${LOOP}p1" ./mnt/; \
+		sudo mkdir -p ./mnt/boot/grub; \
+		sudo cp ./build/$(TARGET).elf ./mnt/boot/$(TARGET).elf; \
+		sudo cp ./grub/grub.cfg ./mnt/boot/grub/grub.cfg; \
+		sudo grub-install --target=i386-pc --boot-directory=./mnt/boot --modules="part_msdos minix" --no-floppy "$$LOOP"; \
+		sync; \
+		sudo umount ./mnt/; \
+		sudo losetup -d "$$LOOP"
 
 run_iso: $(TARGET).iso
 	qemu-system-i386 -m 64M -boot d -cdrom $(TARGET).iso
