@@ -3,11 +3,12 @@ OBJ := \
 	./build/kernel.o \
 	./build/init/init.user.o
 TARGET := potatoOS
-IMG_SIZE := 64M
+IMG_SIZE_MiB := 64
 
 .PHONY: all build_iso build_img run_img clean
 
 $(shell mkdir -p ./build)
+$(shell mkdir -p ./mnt)
 
 all: build_iso build_img
 
@@ -30,16 +31,31 @@ build_iso: ./build/$(TARGET).elf
 	cp ./build/$(TARGET).elf ./build/$(TARGET)/boot/$(TARGET).elf
 	grub-mkrescue -o $(TARGET).iso ./build/$(TARGET)
 
-build_img: build_iso
-	qemu-img create -f raw $(TARGET).img $(IMG_SIZE)
-	dd if=$(TARGET).iso of=$(TARGET).img conv=notrunc
+build_img: ./build/$(TARGET).elf
+	dd if=/dev/zero of=$(TARGET).img bs=1M count=$(IMG_SIZE_MiB)
+	parted -s $(TARGET).img \
+		mklabel msdos \
+    	mkpart primary 1MiB 100% \
+    	set 1 boot on
+	LOOP=$$(sudo losetup --find --partscan --show $(TARGET).img); \
+	sudo mkfs.minix -1 -n 30 "$${LOOP}p1"; \
+	sudo mount -t minix "$${LOOP}p1" ./mnt/; \
+	sudo mkdir -p ./mnt/boot/grub; \
+	sudo cp ./build/$(TARGET).elf ./mnt/boot/$(TARGET).elf; \
+	sudo cp ./grub/grub.cfg ./mnt/boot/grub/grub.cfg; \
+	sudo grub-install --target=i386-pc --boot-directory=./mnt/boot --modules="part_msdos minix" --no-floppy "$$LOOP"; \
+	sync; \
+	sudo umount ./mnt/; \
+	sudo losetup -d "$$LOOP"
 
-run_iso: build_iso
+run_iso: $(TARGET).iso
 	qemu-system-i386 -m 64M -boot d -cdrom $(TARGET).iso
 
-run_img: build_img
-	qemu-system-i386 -m 64M -boot c -drive file=$(TARGET).img,format=raw,if=ide,index=0,media=disk
+run_img: $(TARGET).iso
+	qemu-system-i386 -m 64M -boot c -drive file=$(TARGET).iso,format=raw,if=ide,index=0,media=disk
 
 clean:
 	rm -rf ./build
-	rm -f $(TARGET).iso $(TARGET).img
+	rm -rf ./mnt
+	rm -f $(TARGET).iso 
+	rm -f $(TARGET).img
