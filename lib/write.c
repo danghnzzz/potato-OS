@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <kernel/syscall.h>
 
-ssize_t write(int fd, const void *buf, uint32_t count)
+ssize_t write(int32_t fd, const void *buf, uint32_t count)
 {
     ssize_t written;
     __asm__ volatile(

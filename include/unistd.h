@@ -5,7 +5,9 @@
 #include <stdint.h>
 
 __attribute__((noreturn)) void _exit(int status_code);
-ssize_t read(int fd, void *buf, uint32_t count);
-ssize_t write(int fd, const void *buf, uint32_t count);
+ssize_t read(int32_t fd, void *buf, uint32_t count);
+ssize_t write(int32_t fd, const void *buf, uint32_t count);
+int32_t open(const char *pathname, int32_t flags);
+int32_t close(int32_t fd);
 
 #endif

@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <kernel/syscall.h>
 
-ssize_t read(int fd, void *buf, uint32_t count)
+ssize_t read(int32_t fd, void *buf, uint32_t count)
 {
     ssize_t received;
     __asm__ volatile(
