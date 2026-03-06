@@ -5,7 +5,7 @@ OBJ := \
 TARGET := potatoOS
 IMG_SIZE_MiB := 64
 
-.PHONY: all build_iso build_img run_img clean
+.PHONY: all build_iso build_img run_img clean programs
 
 $(shell mkdir -p ./build)
 $(shell mkdir -p ./mnt)
@@ -24,6 +24,9 @@ all: build_iso build_img
 ./build/$(TARGET).elf: $(OBJ)
 	ld -m elf_i386 -T ./linker.ld -o ./build/$(TARGET).elf $(OBJ)
 
+programs:
+	cd ./programs && make
+
 build_iso: ./build/$(TARGET).elf
 	mkdir -p ./build/$(TARGET)
 	mkdir -p ./build/$(TARGET)/boot
@@ -31,7 +34,7 @@ build_iso: ./build/$(TARGET).elf
 	cp ./build/$(TARGET).elf ./build/$(TARGET)/boot/$(TARGET).elf
 	grub-mkrescue -o $(TARGET).iso ./build/$(TARGET)
 
-build_img: ./build/$(TARGET).elf
+build_img: ./build/$(TARGET).elf programs
 	dd if=/dev/zero of=$(TARGET).img bs=1M count=$(IMG_SIZE_MiB)
 	parted -s $(TARGET).img \
 		mklabel msdos \
@@ -43,6 +46,8 @@ build_img: ./build/$(TARGET).elf
 		sudo mkdir -p ./mnt/boot/grub; \
 		sudo cp ./build/$(TARGET).elf ./mnt/boot/$(TARGET).elf; \
 		sudo cp ./grub/grub.cfg ./mnt/boot/grub/grub.cfg; \
+		sudo mkdir -p ./mnt/bin; \
+		sudo cp -r ./build/bin/. ./mnt/bin/; \
 		sudo grub-install --target=i386-pc --boot-directory=./mnt/boot --modules="part_msdos minix" --no-floppy "$$LOOP"; \
 		sync; \
 		sudo umount ./mnt/; \
