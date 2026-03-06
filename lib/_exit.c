@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <kernel/syscall.h>
 
-__attribute__((noreturn)) void _exit(int status_code)
+__attribute__((noreturn)) void _exit(int32_t status_code)
 {
     for (;;) 
     {
