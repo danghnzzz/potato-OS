@@ -29,7 +29,7 @@ static uint8_t pci_read_device(uint8_t bus, uint8_t device, uint8_t func, pci_cf
     return 1;
 }
 
-void scan_pci(void)
+uint8_t scan_pci(void)
 {
     console_puts("Scanning PCIs ...\n");
     for (uint16_t bus = 0; bus < 256; bus++)

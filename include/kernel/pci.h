@@ -58,7 +58,7 @@ static inline void pci_write32(uint32_t addr, uint32_t val)
     outl(PCI_CFG_ADDR_REGISTER, addr);
     outl(PCI_CFG_DATA_REGISTER, val);
 }
-void scan_pci(void);
+uint8_t scan_pci(void);
 uint8_t pci_find_device(uint8_t base_class, uint8_t sub_class, pci_device_t *out);
 void pci_enable_bus_master(pci_device_t *dev);
 

@@ -8,6 +8,6 @@
 #define PAGE_FLAG_WRITABLE 0x2
 #define PAGE_FLAG_USER 0x4
 
-void enable_paging(void);
+uint8_t enable_paging(void);
 
 #endif
