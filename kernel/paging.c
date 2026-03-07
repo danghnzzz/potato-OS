@@ -32,7 +32,7 @@ static void setup_user_first_page(void)
     page_directory[1] = ((uint32_t) user_page_table) | PAGE_FLAG_PRESENT | PAGE_FLAG_WRITABLE | PAGE_FLAG_USER;
 }
 
-void enable_paging(void)
+uint8_t enable_paging(void)
 {
     console_puts("Enabling memory paging ... ");
     clear_page_directory();

@@ -11,6 +11,7 @@
 #include <kernel/tss.h>
 #include <kernel/timer.h>
 #include <kernel/disk.h>
+#include <kernel/fs.h>
 #include <kernel/keyboard.h>
 
 extern uint8_t *user_stack_top;
@@ -74,7 +75,11 @@ int main()
     init_tty();
     init_tss((uint32_t) kernel_stack_top);
     init_timer();
-    init_disk();
+    uint8_t disk_is_ready = init_disk();
+    if (disk_is_ready)
+    {
+        init_fs();
+    }
     init_keyboard();
     console_puts("Entering user-space ...\n");
     enter_user_space((uint32_t) user_entry_point);
