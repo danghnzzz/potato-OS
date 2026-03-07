@@ -5,15 +5,15 @@
 
 ssize_t read(int32_t fd, void *buf, uint32_t count)
 {
-    ssize_t received;
+    ssize_t read;
     __asm__ volatile(
         "int 0x80"
-        : "=a" (received)
+        : "=a" (read)
         : "0" (SYS_READ),
           "b" (fd),
           "c" ((uint32_t) buf),
           "d" (count)
         : "memory"
     );
-    return received;
+    return read;
 }

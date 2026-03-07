@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <kernel/pci.h>
 #include <kernel/console.h>
 
@@ -70,6 +71,7 @@ void scan_pci(void)
         console_puts("  No PCI found\n");
     }
     console_puts("Done\n");
+    return 1;
 }
 
 uint8_t pci_find_device(uint8_t base_class, uint8_t sub_class, pci_device_t *out)

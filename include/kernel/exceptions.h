@@ -39,7 +39,7 @@
 
 typedef void (*exception_handler_t)(uint8_t exc, uint32_t err_code);
 
-void init_exceptions(void);
+uint8_t init_exceptions(void);
 void register_exception_handler(uint8_t exc, exception_handler_t handler);
 
 #endif

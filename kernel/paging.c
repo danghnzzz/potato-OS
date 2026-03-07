@@ -59,4 +59,5 @@ void enable_paging(void)
         : "memory"
     );
     console_puts("Done\n");
+    return 1;
 }

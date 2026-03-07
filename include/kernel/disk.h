@@ -45,7 +45,7 @@ typedef struct __attribute__((packed))
     uint16_t reserved;
 } prdt_entry_t;
 
-void init_disk(void);
+uint8_t init_disk(void);
 uint8_t disk_read(uint32_t lba, void *buffer, uint8_t sectors);
 uint8_t disk_write(uint32_t lba, const void *buffer, uint8_t sectors);
 
