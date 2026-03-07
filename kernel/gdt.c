@@ -45,7 +45,7 @@ static void reload_segment_registers(void)
     );
 }
 
-void init_gdt(void)
+uint8_t init_gdt(void)
 {
     console_puts("Registering global descriptor table ... ");
     gdt_set_entry(0, 0, 0, 0, 0);
@@ -56,4 +56,5 @@ void init_gdt(void)
     lgdt(gdt, sizeof(gdt));
     reload_segment_registers();
     console_puts("Done\n");
+    return 1;
 }

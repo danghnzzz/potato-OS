@@ -8,7 +8,7 @@
 #define PIT_BASE_FREQUENCY 1193180
 #define TIMER_HZ 100
 
-void init_timer(void);
+uint8_t init_timer(void);
 uint32_t get_current_ticks();
 
 #endif

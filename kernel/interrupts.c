@@ -151,7 +151,7 @@ static void enable_interrupts(void)
     __asm__ volatile("sti");
 }
 
-void init_interrupts(void)
+uint8_t init_interrupts(void)
 {
     console_puts("Setting up CPU interrupts ... ");
     pic_remap();
@@ -161,6 +161,7 @@ void init_interrupts(void)
     lidt(idt, sizeof(idt));
     enable_interrupts();
     console_puts("Done\n");
+    return 1;
 }
 
 void register_irq_handler(uint8_t irq, irq_handler_t handler)

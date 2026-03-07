@@ -25,6 +25,6 @@ typedef struct
 } syscall_registers_t;
 typedef ssize_t (*syscall_handler_t)(syscall_registers_t *regs);
 
-void init_syscall(void);
+uint8_t init_syscall(void);
 
 #endif

@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <kernel/tty.h>
 #include <kernel/console.h>
 
@@ -48,12 +49,13 @@ static inline char tty_queue_pop_char(void)
     return c;
 }
 
-void init_tty(void)
+uint8_t init_tty(void)
 {
     console_puts("Setting up TTY ... ");
     tty_queue_head = 0;
     tty_queue_tail = 0;
     console_puts("Done\n");
+    return 1;
 }
 
 void tty_putc(char c)

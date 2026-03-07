@@ -16,24 +16,25 @@ static void ata_irq_handler(void)
     inb(ATA_PRIMARY_DATA_REGISTER + ATA_STATUS_REGISTER_OFFSET);
 }
 
-void init_disk(void)
+uint8_t init_disk(void)
 {
     console_puts("Initializing IDE disk ... ");
     if (!pci_find_device(0x1, 0x1, &ide_dev))
     {
         console_puts("Failed: IDE controller not found\n");
-        return;
+        return 0;
     }
     if ((ide_dev.cfg.bar[4] & 0xfffc) == 0)
     {
         console_puts("Failed: bus-master BAR missing\n");
-        return;
+        return 0;
     }
     pci_enable_bus_master(&ide_dev);
     outb(ATA_PRIMARY_CONTROL_REGISTER, 0x0);
     register_irq_handler(14, ata_irq_handler);
     unmask_irq(14);
     console_puts("Done\n");
+    return 1;
 }
 
 static void ata_io_wait(void)

@@ -3,6 +3,6 @@
 
 #define KEYBOARD_CONTROLLER_DATA_REGISTER 0x60
 
-void init_keyboard(void);
+uint8_t init_keyboard(void);
 
 #endif

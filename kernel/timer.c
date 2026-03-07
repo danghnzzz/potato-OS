@@ -11,7 +11,7 @@ static void timer_irq_handler(void)
     timer_ticks++;
 }
 
-void init_timer()
+uint8_t init_timer()
 {
     console_puts("Initializing PIT timer ... ");
     uint32_t ticks_per_int = PIT_BASE_FREQUENCY / TIMER_HZ;
@@ -21,6 +21,7 @@ void init_timer()
     register_irq_handler(0, timer_irq_handler);
     unmask_irq(0);
     console_puts("Done\n");
+    return 1;
 }
 
 uint32_t get_current_ticks()

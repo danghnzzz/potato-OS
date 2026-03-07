@@ -62,7 +62,7 @@ static void ltss(void)
     );
 }
 
-void init_tss(uint32_t stack)
+uint8_t init_tss(uint32_t stack)
 {
     console_puts("Setting up task state segment ... ");
     init_tss_entry();
@@ -72,4 +72,5 @@ void init_tss(uint32_t stack)
     gdt_set_tss_entry();
     ltss();
     console_puts("Done\n");
+    return 1;
 }

@@ -47,7 +47,7 @@ typedef struct __attribute__((packed))
     uint16_t iopb;
 } tss_entry_t;
 
-void init_tss(uint32_t stack);
+uint8_t init_tss(uint32_t stack);
 void tss_set_kernel_stack(uint32_t esp);
 
 #endif

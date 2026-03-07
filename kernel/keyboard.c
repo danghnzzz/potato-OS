@@ -24,10 +24,11 @@ static void keyboard_irq_handler(void)
     }
 }
 
-void init_keyboard(void)
+uint8_t init_keyboard(void)
 {
     console_puts("Initializing keyboard ... ");
     register_irq_handler(1, keyboard_irq_handler);
     unmask_irq(1);
     console_puts("Done\n");
+    return 1;
 }
