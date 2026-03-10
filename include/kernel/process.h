@@ -2,6 +2,7 @@
 #define PROCESS_H
 
 #include <stdint.h>
+#include <kernel/memory.h>
 #include <kernel/fs.h>
 
 #define PROCESS_FDS 32
@@ -25,6 +26,7 @@ typedef struct task_struct_t
     uint32_t pid;
     uint32_t ppid;
     task_context_t context;
+    mm_t *mm;
     uintptr_t kernel_stack_base;
     uintptr_t kernel_stack_top;
     file_t *file[PROCESS_FDS];
