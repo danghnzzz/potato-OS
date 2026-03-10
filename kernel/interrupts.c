@@ -2,6 +2,7 @@
 #include <kernel/io.h>
 #include <kernel/interrupts.h>
 #include <kernel/console.h>
+#include <kernel/gdt.h>
 
 static idt_entry idt[IDT_ENTRIES];
 static irq_handler_t irq_handlers[16];
@@ -86,7 +87,7 @@ DECLARE_IRQ(15)
 void idt_set_gate(uint8_t idx, uint32_t handler, uint8_t interrupts_gate_flags)
 {
     idt[idx].offset_low = (uint16_t) handler;
-    idt[idx].selector = 0x8;
+    idt[idx].selector = GDT_KERNEL_CODE_SELECTOR;
     idt[idx].reserved = 0;
     idt[idx].type_attr = interrupts_gate_flags;
     idt[idx].offset_high = (uint16_t) (handler >> 16);
