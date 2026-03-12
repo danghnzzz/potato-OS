@@ -12,7 +12,7 @@ $(shell mkdir -p ./mnt)
 
 all: build_iso build_img
 
-./build/boot.o:
+./build/boot.o: ./boot/boot.asm
 	nasm -f elf32 -o ./build/boot.o ./boot/boot.asm
 
 ./build/kernel.o:
@@ -21,7 +21,7 @@ all: build_iso build_img
 ./build/init/init.user.o:
 	cd ./init && make
 
-./build/$(TARGET)kernel.elf: $(OBJ)
+./build/$(TARGET)kernel.elf: $(OBJ) ./linker.ld
 	ld -m elf_i386 -T ./linker.ld -o ./build/$(TARGET)kernel.elf $(OBJ)
 
 programs:
