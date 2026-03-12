@@ -6,7 +6,7 @@ extern main
 
 section .multiboot
 align 4
-.boot:
+boot:
     dd 0x1badb002
     dd 0x00000000
     dd -(0x1badb002 + 0x00000000)
