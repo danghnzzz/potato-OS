@@ -24,7 +24,7 @@ typedef struct
 typedef struct task_struct_t
 {
     uint32_t pid;
-    uint32_t ppid;
+    struct task_struct_t *parent;
     task_context_t context;
     mm_t *mm;
     uintptr_t kernel_stack_base;
