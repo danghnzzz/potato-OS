@@ -4,6 +4,8 @@
 #include <kernel/memory.h>
 #include <kernel/paging.h>
 
+static task_t *current_task;
+
 static void copy_kernel_mappings(uintptr_t *dst_pgd, uintptr_t *src_pgd)
 {
     for (uint32_t i = 0; i < PAGE_DIRECTORY_ENTRIES; i++)
@@ -34,7 +36,7 @@ static uint8_t map_proc1_page_table(uintptr_t *pgd)
     return 1;
 }
 
-uint8_t create_process_mm(mm_t *mm)
+uint8_t create_task_mm(mm_t *mm)
 {
     uintptr_t *pgd = alloc_pd();
     if (!pgd)
@@ -51,4 +53,14 @@ uint8_t create_process_mm(mm_t *mm)
     mm->pgd = pgd;
     mm->mmap = 0;
     return 1;
+}
+
+void set_current_task(task_t *task)
+{
+    current_task = task;
+}
+
+task_t *get_current_task(void)
+{
+    return current_task;
 }

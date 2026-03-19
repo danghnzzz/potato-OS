@@ -35,6 +35,8 @@ typedef struct task_struct_t
     struct task_struct_t *next;
 } task_t;
 
-uint8_t create_process_mm(mm_t *mm);
+uint8_t create_task_mm(mm_t *mm);
+void set_current_task(task_t *task);
+task_t *get_current_task(void);
 
 #endif
