@@ -24,6 +24,7 @@ extern void user_entry_point(void);
 static void enter_proc1(uint32_t entry_point)
 {
     task_t *proc1 = kmalloc(sizeof(task_t));
+    set_current_task(proc1);
     mm_t *mm1 = kmalloc(sizeof(mm_t));
     uint32_t eflags;
     __asm__ volatile(
@@ -38,7 +39,7 @@ static void enter_proc1(uint32_t entry_point)
     proc1->parent = 0;
     proc1->kernel_stack_base = (uintptr_t) kernel_stack_top - 8192;
     proc1->kernel_stack_top = (uintptr_t) kernel_stack_top;
-    if (!create_process_mm(mm1))
+    if (!create_task_mm(mm1))
     {
         console_puts("Failed to create proc1 mm\n");
         for (;;);
