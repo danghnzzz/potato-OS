@@ -1,6 +1,7 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
+#include <stddef.h>
 #include <stdint.h>
 #include <kernel/memory.h>
 #include <kernel/fs.h>
@@ -33,5 +34,7 @@ typedef struct task_struct_t
     struct task_struct_t *prev;
     struct task_struct_t *next;
 } task_t;
+
+uint8_t create_process_mm(mm_t *mm);
 
 #endif

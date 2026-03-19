@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <kernel/heap.h>
+#include <kernel/console.h>
 
 static uint8_t kernel_heap[KERNEL_HEAP_SIZE] __attribute__((aligned(8)));
 static heap_block_t *heap_head;
