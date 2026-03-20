@@ -1,0 +1,59 @@
+#include <stddef.h>
+#include <stdint.h>
+#include <kernel/heap.h>
+#include <kernel/memory.h>
+#include <kernel/paging.h>
+#include <kernel/process.h>
+
+static uintptr_t align_down(uintptr_t addr)
+{
+    return addr & ~(PAGE_SIZE - 1);
+}
+
+static uintptr_t align_up(uintptr_t addr)
+{
+    return (addr + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1);
+}
+
+vm_area_t *do_mmap(uintptr_t addr, size_t length, file_t *file, uint32_t offset)
+{
+    task_t *task = get_current_task();
+    mm_t *mm = task->mm;
+    uintptr_t start = align_down(addr);
+    uintptr_t end = align_up(addr + length);
+    vm_area_t *vma = kmalloc(sizeof(vm_area_t));
+    vma->vm_start = start;
+    vma->vm_end = end;
+    vma->vm_offset = offset;
+    vma->vm_mm = mm;
+    vma->vm_file = file;
+    vma->vm_prev = 0;
+    vma->vm_next = 0;
+    if (!mm->mmap)
+    {
+        mm->mmap = vma;
+        return vma;
+    }
+    vm_area_t *iter = mm->mmap;
+    vm_area_t *prev = 0;
+    while (iter && iter->vm_start < start)
+    {
+        prev = iter;
+        iter = iter->vm_next;
+    }
+    vma->vm_prev = prev;
+    vma->vm_next = iter;
+    if (prev)
+    {
+        prev->vm_next = vma;
+    }
+    else
+    {
+        mm->mmap = vma;
+    }
+    if (iter)
+    {
+        iter->vm_prev = vma;
+    }
+    return vma;
+}

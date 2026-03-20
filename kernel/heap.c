@@ -32,7 +32,7 @@ static void split_block(heap_block_t *block, size_t size)
     block->next = new_block;
 }
 
-static size_t align(size_t size)
+static size_t align_up(size_t size)
 {
     return (size + 0x7) & 0xfffffff8;
 }
@@ -40,7 +40,7 @@ static size_t align(size_t size)
 void *kmalloc(size_t size)
 {
     heap_block_t *block;
-    size = align(size);
+    size = align_up(size);
     for (block = heap_head; block; block = block->next)
     {
         if (block->is_free && block->size >= size)
