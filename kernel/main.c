@@ -2,6 +2,7 @@
 #include <string.h>
 #include <kernel/console.h>
 #include <kernel/gdt.h>
+#include <kernel/heap.h>
 #include <kernel/pci.h>
 #include <kernel/interrupts.h>
 #include <kernel/exceptions.h>
@@ -14,7 +15,6 @@
 #include <kernel/keyboard.h>
 #include <kernel/process.h>
 #include <kernel/paging.h>
-#include <kernel/heap.h>
 
 extern uint8_t kernel_stack_top[];
 extern void user_entry_point(void);
@@ -81,6 +81,7 @@ int main()
     enable_console_cursor();
     console_puts("Hello, World!\n");
     init_gdt();
+    init_heap();
     scan_pci();
     init_interrupts();
     init_exceptions();
