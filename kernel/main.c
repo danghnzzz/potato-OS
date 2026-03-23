@@ -16,6 +16,7 @@
 #include <kernel/fs.h>
 #include <kernel/keyboard.h>
 #include <kernel/process.h>
+#include <kernel/fault.h>
 
 extern uint8_t kernel_stack_top[];
 extern void user_entry_point(void);
@@ -96,6 +97,7 @@ int main()
     {
         init_fs();
     }
+    init_fault();
     init_keyboard();
     console_puts("Spawning proc1 ...\n");
     enter_proc1((uint32_t) user_entry_point);
