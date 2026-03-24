@@ -8,10 +8,16 @@
 #define FILE_SYSTEM_BASE_SECTOR 2048
 #define FS_BLOCK_SIZE 1024
 #define SECTORS_PER_BLOCK (FS_BLOCK_SIZE / DISK_SECTOR_SIZE)
+#define INODES_PER_BLOCK (FS_BLOCK_SIZE / 32)
 #define DIRECT_ZONES 7
 #define INDIRECT_ZONE_INDEX 7
 #define DOUBLE_INDIRECT_ZONE_INDEX 8
 #define POINTERS_PER_ZONE 512
+#define MINIX_ROOT_INODE 1
+#define PATH_COMPONENTS 32
+#define MINIX_MAX_NAME_LENGTH 30
+#define MINIX_MODE_MASK 0170000
+#define MINIX_MODE_DIRECTORY 0040000
 
 typedef struct __attribute__((packed))
 {
@@ -43,5 +49,7 @@ typedef struct __attribute__((packed))
 
 uint8_t init_fs(void);
 ssize_t vfs_read(file_t *file, void *buffer, uint32_t count);
+uint8_t vfs_open(const char *path, file_t *file);
+void vfs_close(file_t *file);
 
 #endif
