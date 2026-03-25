@@ -202,7 +202,7 @@ static uint16_t get_child_inode_num(const minix_inode_t *dir_inode, const char *
     file_t dir_file;
     uint8_t block_buf[FS_BLOCK_SIZE];
     const uint32_t dir_entry_size = 2 + MINIX_MAX_NAME_LENGTH;
-    if (!dir_inode || !name || !is_directory(dir_inode))
+    if (!is_directory(dir_inode))
     {
         return 0;
     }

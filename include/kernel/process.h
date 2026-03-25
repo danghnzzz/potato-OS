@@ -7,6 +7,7 @@
 #include <kernel/fs.h>
 
 #define PROCESS_FDS 32
+#define PROCESS_KERNEL_STACK_SIZE 8192
 
 typedef struct
 {

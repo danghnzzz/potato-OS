@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <stdint.h>
 #include <kernel/gdt.h>
 #include <kernel/tss.h>
@@ -62,7 +63,7 @@ static void ltss(void)
     );
 }
 
-uint8_t init_tss(uint32_t stack)
+uint8_t init_tss(uintptr_t stack)
 {
     console_puts("Setting up task state segment ... ");
     init_tss_entry();
@@ -73,4 +74,9 @@ uint8_t init_tss(uint32_t stack)
     ltss();
     console_puts("Done\n");
     return 1;
+}
+
+void tss_set_kernel_stack(uintptr_t esp)
+{
+    tss.esp0 = esp;
 }
