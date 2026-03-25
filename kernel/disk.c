@@ -5,11 +5,17 @@
 #include <kernel/pci.h>
 #include <kernel/console.h>
 #include <kernel/interrupts.h>
+#include <kernel/paging.h>
 #include <kernel/timer.h>
 
 static prdt_entry_t primary_prdt __attribute__((aligned(4)));
 static uint8_t dma_buffer[DISK_DMA_MAX_SECTORS * DISK_SECTOR_SIZE] __attribute__((aligned(16)));
 static pci_device_t ide_dev;
+
+static uint32_t kernel_phys_ptr(const void *ptr)
+{
+    return (uint32_t) ((uintptr_t) ptr - KERNEL_VMA_TO_LMA_OFFSET);
+}
 
 static void ata_irq_handler(void)
 {
@@ -95,7 +101,7 @@ static uint8_t ata_dma_transfer(uint32_t lba, uint8_t sectors, uint8_t is_write)
     {
         return 0;
     }
-    primary_prdt.buffer_phys_addr = (uint32_t) dma_buffer;
+    primary_prdt.buffer_phys_addr = kernel_phys_ptr(dma_buffer);
 	primary_prdt.transfer_bytes = (uint16_t) (sectors * DISK_SECTOR_SIZE);
 	primary_prdt.reserved = PRDT_END;
     if (!ata_wait4_not_busy())
@@ -110,7 +116,7 @@ static uint8_t ata_dma_transfer(uint32_t lba, uint8_t sectors, uint8_t is_write)
     outb(bm_command_port, (uint8_t) (inb(bm_command_port) & ~BM_COMMAND_START));
     outb(bm_command_port, bm_direction);
     outb(bm_status_port, (uint8_t) (BM_STATUS_IRQ_COMPLETED | BM_STATUS_ERROR));
-	outl(bm_prdt_port, (uint32_t) &primary_prdt);
+	outl(bm_prdt_port, kernel_phys_ptr(&primary_prdt));
     ata_set_lba28(lba);
     outb(ATA_PRIMARY_DATA_REGISTER + ATA_FEATURE_REGISTER_OFFSET, 0x0);
     outb(ATA_PRIMARY_DATA_REGISTER + ATA_SECCOUNT_REGISTER_OFFSET, sectors);
