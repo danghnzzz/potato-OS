@@ -3,6 +3,6 @@
 void _start(void)
 {
     const char msg[] = "|-| [- |_ |_ ()\n";
-    write(0, msg, sizeof(msg) - 1);
+    write(1, msg, sizeof(msg) - 1);
     _exit(0);
 }
