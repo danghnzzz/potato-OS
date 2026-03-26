@@ -29,6 +29,8 @@ typedef struct vm_area_struct_t vm_area_t;
 uint8_t init_physical_memory_allocator(void);
 uintptr_t alloc_phys_frame(void);
 uint8_t free_phys_frame(uintptr_t frame_base_addr);
+uintptr_t align_down(uintptr_t addr);
+uintptr_t align_up(uintptr_t addr);
 vm_area_t *do_mmap(uintptr_t addr, size_t length, file_t *file, uint32_t offset);
 
 #endif
