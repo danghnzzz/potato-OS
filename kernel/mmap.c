@@ -5,12 +5,12 @@
 #include <kernel/paging.h>
 #include <kernel/process.h>
 
-static uintptr_t align_down(uintptr_t addr)
+uintptr_t align_down(uintptr_t addr)
 {
     return addr & ~(PAGE_SIZE - 1);
 }
 
-static uintptr_t align_up(uintptr_t addr)
+uintptr_t align_up(uintptr_t addr)
 {
     return (addr + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1);
 }
@@ -20,11 +20,15 @@ vm_area_t *do_mmap(uintptr_t addr, size_t length, file_t *file, uint32_t offset)
     task_t *task = get_current_task();
     mm_t *mm = task->mm;
     uintptr_t start = align_down(addr);
+    if (file && offset < (uint32_t) (addr - start))
+    {
+        return 0;
+    }
     uintptr_t end = align_up(addr + length);
     vm_area_t *vma = kmalloc(sizeof(vm_area_t));
     vma->vm_start = start;
     vma->vm_end = end;
-    vma->vm_offset = offset;
+    vma->vm_offset = file ? (offset - (uint32_t) (addr - start)) : 0;
     vma->vm_mm = mm;
     vma->vm_file = file;
     vma->vm_prev = 0;
@@ -40,6 +44,11 @@ vm_area_t *do_mmap(uintptr_t addr, size_t length, file_t *file, uint32_t offset)
     {
         prev = iter;
         iter = iter->vm_next;
+    }
+    if ((prev && prev->vm_end > start) || (iter && end > iter->vm_start))
+    {
+        kfree(vma);
+        return 0;
     }
     vma->vm_prev = prev;
     vma->vm_next = iter;
