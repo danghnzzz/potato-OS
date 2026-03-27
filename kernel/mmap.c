@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 #include <kernel/heap.h>
 #include <kernel/memory.h>
 #include <kernel/paging.h>
@@ -15,6 +16,24 @@ uintptr_t align_up(uintptr_t addr)
     return (addr + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1);
 }
 
+uint8_t padzero(uintptr_t addr)
+{
+    task_t *task = get_current_task();
+    size_t num_zeros = (size_t) (align_up(addr) - addr);
+    uintptr_t current_cr3 = get_cr3();
+    uintptr_t target_cr3 = get_pd_lma((uintptr_t) task->mm->pgd);
+    if (current_cr3 != target_cr3)
+    {
+        set_cr3(target_cr3);
+    }
+    memset((void *) addr, 0, num_zeros);
+    if (current_cr3 != target_cr3)
+    {
+        set_cr3(current_cr3);
+    }
+    return 1;
+}
+
 vm_area_t *do_mmap(uintptr_t addr, size_t length, file_t *file, uint32_t offset)
 {
     task_t *task = get_current_task();
@@ -26,6 +45,10 @@ vm_area_t *do_mmap(uintptr_t addr, size_t length, file_t *file, uint32_t offset)
     }
     uintptr_t end = align_up(addr + length);
     vm_area_t *vma = kmalloc(sizeof(vm_area_t));
+    if (!vma)
+    {
+        return 0;
+    }
     vma->vm_start = start;
     vma->vm_end = end;
     vma->vm_offset = file ? (offset - (uint32_t) (addr - start)) : 0;
@@ -65,4 +88,9 @@ vm_area_t *do_mmap(uintptr_t addr, size_t length, file_t *file, uint32_t offset)
         iter->vm_prev = vma;
     }
     return vma;
+}
+
+vm_area_t *vm_brk_flags(uintptr_t addr, size_t length)
+{
+    return do_mmap(addr, length, 0, 0);
 }
