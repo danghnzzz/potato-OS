@@ -1,7 +1,6 @@
 OBJ := \
 	./build/boot.o \
-	./build/kernel.o \
-	./build/init/init.user.o
+	./build/kernel.o
 TARGET := potato
 IMG_SIZE_MiB := 64
 
@@ -17,9 +16,6 @@ all: build_iso build_img
 
 ./build/kernel.o:
 	cd ./kernel && make
-
-./build/init/init.user.o:
-	cd ./init && make
 
 ./build/$(TARGET)kernel.elf: $(OBJ) ./linker.ld
 	ld -m elf_i386 -T ./linker.ld -o ./build/$(TARGET)kernel.elf $(OBJ)
