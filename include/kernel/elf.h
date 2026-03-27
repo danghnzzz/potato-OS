@@ -1,8 +1,11 @@
 #ifndef ELF_H
 #define ELF_H
 
+#include <stddef.h>
 #include <stdint.h>
 #include <kernel/fs.h>
+
+#define ELF32_PT_LOAD 1
 
 typedef struct __attribute__((packed))
 {
@@ -35,5 +38,6 @@ typedef struct __attribute__((packed))
 
 uint8_t elf32_load_ehdr(file_t *file, elf32_ehdr_t *elf32_ehdr_out);
 uint8_t elf32_load_phdr(file_t *file, elf32_phdr_t *elf32_phdr_out);
+uint8_t elf32_load_exec(file_t *file, uint32_t *entry_point);
 
 #endif
