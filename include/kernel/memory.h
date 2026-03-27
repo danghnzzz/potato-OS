@@ -7,6 +7,8 @@
 #include <kernel/paging.h>
 
 #define PHYSICAL_FRAMES 16384
+#define USER_STACK_BASE 0xbffff000
+#define USER_STACK_TOP (USER_STACK_BASE + PAGE_SIZE)
 
 typedef struct vm_area_struct_t vm_area_struct_t;
 typedef struct
