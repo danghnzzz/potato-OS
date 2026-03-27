@@ -10,10 +10,4 @@ SECTIONS
     .rodata : AT(KERNEL_LMA + (ADDR(.rodata) - KERNEL_VMA)) {*(.rodata)}
     .data : AT(KERNEL_LMA + (ADDR(.data) - KERNEL_VMA)) {*(.data)}
     .bss : AT(KERNEL_LMA + (ADDR(.bss) - KERNEL_VMA)) {*(.bss)}
-
-    . = 0x00400000;
-    .user_text : {*(.user_text)}
-    .user_rodata : {*(.user_rodata)}
-    .user_data : {*(.user_data)}
-    .user_bss : {*(.user_bss)}
 }
