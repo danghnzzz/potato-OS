@@ -31,6 +31,8 @@ uintptr_t alloc_phys_frame(void);
 uint8_t free_phys_frame(uintptr_t frame_base_addr);
 uintptr_t align_down(uintptr_t addr);
 uintptr_t align_up(uintptr_t addr);
+uint8_t padzero(uintptr_t addr);
 vm_area_t *do_mmap(uintptr_t addr, size_t length, file_t *file, uint32_t offset);
+vm_area_t *vm_brk_flags(uintptr_t addr, size_t length);
 
 #endif
