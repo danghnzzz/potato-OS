@@ -20,7 +20,6 @@
 #include <kernel/fault.h>
 
 extern uint8_t kernel_stack_top[];
-extern void user_entry_point(void);
 
 #define PROC1_VIRT_BASE 0x00400000
 #define PROC1_EXEC_PATH "/bin/potatoshell"
@@ -55,25 +54,41 @@ static void print_proc1_exec_info(file_t *exec)
     console_putc('\n');
 }
 
-static void enter_proc1(uint32_t entry_point)
+static void enter_proc1(void)
 {
+    uint32_t entry_point;
     console_puts("Spawning proc1 ...\n");
-    task_t *proc1 = kmalloc(sizeof(task_t));
+    task_t *proc1 = (task_t *) kmalloc(sizeof(task_t));
+    if (!proc1)
+    {
+        console_puts("Failed: can not allocate proc1 task\n");
+        spin_forever();
+    }
+    memset(proc1, 0, sizeof(*proc1));
     proc1->pid = 1;
     proc1->parent = 0;
     uint8_t *stack = kmalloc(PROCESS_KERNEL_STACK_SIZE);
+    if (!stack)
+    {
+        console_puts("Failed: can not allocate proc1 kernel stack\n");
+        spin_forever();
+    }
     proc1->kernel_stack_base = (uintptr_t) stack;
     proc1->kernel_stack_top = (uintptr_t) (stack + PROCESS_KERNEL_STACK_SIZE);
     tss_set_kernel_stack((uint32_t) proc1->kernel_stack_top);
     mm_t *mm1 = kmalloc(sizeof(mm_t));
+    if (!mm1)
+    {
+        console_puts("Failed: can not allocate proc1 mm\n");
+        spin_forever();
+    }
     if (!create_task_mm(mm1))
     {
         console_puts("Failed: can not create proc1 mm\n");
         spin_forever();
     }
-    proc1->context.eip = entry_point;
-    proc1->context.esp = (uint32_t) (PROC1_VIRT_BASE + PAGE_SIZE);
-    proc1->context.ebp = (uint32_t) (PROC1_VIRT_BASE + PAGE_SIZE);
+    proc1->context.esp = PROC1_VIRT_BASE + PAGE_SIZE;
+    proc1->context.ebp = PROC1_VIRT_BASE + PAGE_SIZE;
     uint32_t eflags;
     __asm__ volatile(
         "pushf\n"
@@ -86,21 +101,20 @@ static void enter_proc1(uint32_t entry_point)
     proc1->context.eflags = eflags;
     proc1->context.cr3 = get_pd_lma((uintptr_t) mm1->pgd);
     proc1->mm = mm1;
-    proc1->prev = 0;
-    proc1->next = 0;
-    file_t proc1_exec;
-    if (!vfs_open(PROC1_EXEC_PATH, &proc1_exec))
+    set_current_task(proc1);
+    file_t *proc1_exec = (file_t *) kmalloc(sizeof(file_t));
+    if (!proc1_exec || !vfs_open(PROC1_EXEC_PATH, proc1_exec))
     {
-        console_puts("Failed: can not open executable file\n");
+        console_puts("Failed: can not get executable file\n");
         spin_forever();
     }
-    print_proc1_exec_info(&proc1_exec);
-    elf32_ehdr_t exec_ehdr;
-    elf32_load_ehdr(&proc1_exec, &exec_ehdr);
-    elf32_phdr_t exec_phdr[exec_ehdr.e_phnum];
-    elf32_load_phdr(&proc1_exec, exec_phdr);
-    vfs_close(&proc1_exec);
-    set_current_task(proc1);
+    print_proc1_exec_info(proc1_exec);
+    if (!elf32_load_exec(proc1_exec, &entry_point))
+    {
+        console_puts("Failed: can not load executable image\n");
+        spin_forever();
+    }
+    proc1->context.eip = entry_point;
     console_puts("Done\n");
     set_cr3(proc1->context.cr3);
     __asm__ volatile(
@@ -152,7 +166,7 @@ int main()
     init_keyboard();
     if (fs_is_ready && fault_handler_is_ready)
     {
-        enter_proc1((uintptr_t) user_entry_point);
+        enter_proc1();
     }
     spin_forever();
     return 0;
