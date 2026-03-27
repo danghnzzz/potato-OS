@@ -21,7 +21,6 @@
 
 extern uint8_t kernel_stack_top[];
 
-#define PROC1_VIRT_BASE 0x00400000
 #define PROC1_EXEC_PATH "/bin/potatoshell"
 
 __attribute__((noreturn)) static void spin_forever(void)
@@ -87,8 +86,6 @@ static void enter_proc1(void)
         console_puts("Failed: can not create proc1 mm\n");
         spin_forever();
     }
-    proc1->context.esp = PROC1_VIRT_BASE + PAGE_SIZE;
-    proc1->context.ebp = PROC1_VIRT_BASE + PAGE_SIZE;
     uint32_t eflags;
     __asm__ volatile(
         "pushf\n"
@@ -102,6 +99,13 @@ static void enter_proc1(void)
     proc1->context.cr3 = get_pd_lma((uintptr_t) mm1->pgd);
     proc1->mm = mm1;
     set_current_task(proc1);
+    if (!vm_brk_flags(USER_STACK_BASE, PAGE_SIZE))
+    {
+        console_puts("Failed: can not reserve user stack\n");
+        spin_forever();
+    }
+    proc1->context.esp = USER_STACK_TOP;
+    proc1->context.ebp = USER_STACK_TOP;
     file_t *proc1_exec = (file_t *) kmalloc(sizeof(file_t));
     if (!proc1_exec || !vfs_open(PROC1_EXEC_PATH, proc1_exec))
     {
