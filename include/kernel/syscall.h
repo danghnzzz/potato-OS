@@ -11,6 +11,7 @@
 #define SYS_WRITE 0x4
 #define SYS_OPEN 0x5
 #define SYS_CLOSE 0x6
+#define SYS_EXECVE 59
 
 typedef struct
 {
