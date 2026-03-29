@@ -44,5 +44,7 @@ void unmask_irq(uint8_t irq);
 void idt_set_gate(uint8_t idx, uint32_t handler, uint8_t interrupts_gate_flags);
 uint8_t init_interrupts(void);
 void register_irq_handler(uint8_t irq, irq_handler_t handler);
+uint32_t irq_save(void);
+void irq_restore(uint32_t flags);
 
 #endif

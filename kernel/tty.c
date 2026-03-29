@@ -6,31 +6,6 @@ static volatile char tty_queue[TTY_QUEUE_SIZE];
 static volatile uint32_t tty_queue_head = 0;
 static volatile uint32_t tty_queue_tail = 0;
 
-static inline uint32_t irq_save(void)
-{
-    uint32_t flags;
-    __asm__ volatile(
-        "pushf\n"
-        "pop %0\n"
-        "cli\n"
-        : "=r"(flags)
-        :
-        : "memory"
-    );
-    return flags;
-}
-
-static inline void irq_restore(uint32_t flags)
-{
-    __asm__ volatile(
-        "push %0\n"
-        "popf\n"
-        :
-        : "r"(flags)
-        : "memory", "cc"
-    );
-}
-
 static inline int8_t queue_empty(void)
 {
     return tty_queue_head == tty_queue_tail;

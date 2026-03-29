@@ -178,3 +178,29 @@ void register_irq_handler(uint8_t irq, irq_handler_t handler)
         irq_handlers[irq] = handler;
     }
 }
+
+uint32_t irq_save(void)
+{
+    uint32_t flags;
+
+    __asm__ volatile(
+        "pushf\n"
+        "pop %0\n"
+        "cli\n"
+        : "=r"(flags)
+        :
+        : "memory"
+    );
+    return flags;
+}
+
+void irq_restore(uint32_t flags)
+{
+    __asm__ volatile(
+        "push %0\n"
+        "popf\n"
+        :
+        : "r"(flags)
+        : "memory", "cc"
+    );
+}
