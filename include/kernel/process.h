@@ -30,7 +30,9 @@ typedef struct task_struct_t
     struct task_struct_t *wait_next;
 } task_t;
 
+uint32_t alloc_pid(void);
 uint8_t create_task_mm(mm_t *mm);
+void release_task_mm(task_t *task);
 __attribute__((noreturn)) void spin_forever(void);
 void set_current_task(task_t *task);
 task_t *get_current_task(void);
