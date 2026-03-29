@@ -116,26 +116,12 @@ static void enter_proc1(void)
     }
     console_puts("Done\n");
     set_cr3(proc1->cr3);
-    __asm__ volatile(
-        "cli\n"
-        "mov eax, %[user_ss]\n"
-        "mov ds, ax\n"
-        "mov es, ax\n"
-        "mov fs, ax\n"
-        "mov gs, ax\n"
-        "push %[user_ss]\n"
-        "push %[user_esp]\n"
-        "push %[user_eflags]\n"
-        "push %[user_cs]\n"
-        "push %[user_eip]\n"
-        "iret\n"
-        :
-        : [user_ss] "r"((uint32_t) GDT_USER_DATA_SELECTOR),
-          [user_esp] "r"((uint32_t) USER_STACK_TOP),
-          [user_eflags] "r"(eflags),
-          [user_cs] "r"((uint32_t) GDT_USER_CODE_SELECTOR),
-          [user_eip] "r"(entry_point)
-        : "eax", "memory"
+    enter_user_task(
+        entry_point,
+        (uint32_t) GDT_USER_CODE_SELECTOR,
+        eflags,
+        (uint32_t) USER_STACK_TOP,
+        (uint32_t) GDT_USER_DATA_SELECTOR
     );
 }
 

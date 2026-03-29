@@ -245,3 +245,26 @@ uint8_t init_idle_task(void)
     console_puts("Done\n");
     return 1;
 }
+
+__attribute__((noreturn, naked)) void enter_user_task(
+    uint32_t user_eip,
+    uint32_t user_cs,
+    uint32_t user_eflags,
+    uint32_t user_esp,
+    uint32_t user_ss
+)
+{
+    __asm__ volatile(
+        "cli\n"
+        "mov eax, [esp + 20]\n"
+        "mov ds, ax\n"
+        "mov es, ax\n"
+        "mov fs, ax\n"
+        "mov gs, ax\n"
+        "add esp, 4\n"
+        "iret\n"
+        :
+        :
+        : "eax", "memory"
+    );
+}
