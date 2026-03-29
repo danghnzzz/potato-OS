@@ -43,5 +43,12 @@ void block_task(task_t *task);
 void wake_task(task_t *task);
 void schedule(void);
 uint8_t init_idle_task(void);
+__attribute__((noreturn, naked)) void enter_user_task(
+    uint32_t user_eip,
+    uint32_t user_cs,
+    uint32_t user_eflags,
+    uint32_t user_esp,
+    uint32_t user_ss
+);
 
 #endif
