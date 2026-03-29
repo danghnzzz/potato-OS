@@ -8,36 +8,38 @@
 
 #define PROCESS_FDS 32
 #define PROCESS_KERNEL_STACK_SIZE 8192
+#define SCHEDULER_TICK_INTERVAL 5
+#define TASK_NEW 0
+#define TASK_READY 1
+#define TASK_RUNNING 2
+#define TASK_BLOCKED 3
 
-typedef struct
-{
-    uint32_t edi;
-    uint32_t esi;
-    uint32_t ebp;
-    uint32_t esp;
-    uint32_t ebx;
-    uint32_t edx;
-    uint32_t ecx;
-    uint32_t eax;
-    uint32_t eip;
-    uint32_t eflags;
-    uint32_t cr3;
-} task_context_t;
 typedef struct task_struct_t
 {
     uint32_t pid;
     struct task_struct_t *parent;
-    task_context_t context;
+    uint8_t state;
     mm_t *mm;
     uintptr_t kernel_stack_base;
     uintptr_t kernel_stack_top;
+    uintptr_t kernel_esp;
+    uintptr_t cr3;
     file_t *file[PROCESS_FDS];
     struct task_struct_t *prev;
     struct task_struct_t *next;
+    struct task_struct_t *wait_next;
 } task_t;
 
 uint8_t create_task_mm(mm_t *mm);
+__attribute__((noreturn)) void spin_forever(void);
 void set_current_task(task_t *task);
 task_t *get_current_task(void);
+uint8_t init_scheduler(void);
+uint8_t enqueue_task(task_t *task);
+uint8_t dequeue_task(task_t *task);
+void block_task(task_t *task);
+void wake_task(task_t *task);
+void schedule(void);
+uint8_t init_idle_task(void);
 
 #endif

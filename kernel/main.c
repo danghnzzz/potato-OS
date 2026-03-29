@@ -9,24 +9,19 @@
 #include <kernel/interrupts.h>
 #include <kernel/exceptions.h>
 #include <kernel/syscall.h>
-#include <kernel/tty.h>
 #include <kernel/tss.h>
+#include <kernel/process.h>
 #include <kernel/timer.h>
 #include <kernel/disk.h>
 #include <kernel/fs.h>
 #include <kernel/elf.h>
-#include <kernel/keyboard.h>
-#include <kernel/process.h>
 #include <kernel/fault.h>
+#include <kernel/tty.h>
+#include <kernel/keyboard.h>
 
 extern uint8_t kernel_stack_top[];
 
 #define PROC1_EXEC_PATH "/bin/potatoshell"
-
-__attribute__((noreturn)) static void spin_forever(void)
-{
-    for (;;);
-}
 
 static void print_proc1_exec_info(file_t *exec)
 {
@@ -55,7 +50,6 @@ static void print_proc1_exec_info(file_t *exec)
 
 static void enter_proc1(void)
 {
-    uint32_t entry_point;
     console_puts("Spawning proc1 ...\n");
     task_t *proc1 = (task_t *) kmalloc(sizeof(task_t));
     if (!proc1)
@@ -95,17 +89,18 @@ static void enter_proc1(void)
         : "memory"
     );
     eflags |= 0x200;
-    proc1->context.eflags = eflags;
-    proc1->context.cr3 = get_pd_lma((uintptr_t) mm1->pgd);
+    proc1->cr3 = get_pd_lma((uintptr_t) mm1->pgd);
     proc1->mm = mm1;
-    set_current_task(proc1);
+    if (!enqueue_task(proc1))
+    {
+        console_puts("Failed: can not register proc1 task\n");
+        spin_forever();
+    }
     if (!vm_brk_flags(USER_STACK_BASE, PAGE_SIZE))
     {
         console_puts("Failed: can not reserve user stack\n");
         spin_forever();
     }
-    proc1->context.esp = USER_STACK_TOP;
-    proc1->context.ebp = USER_STACK_TOP;
     file_t *proc1_exec = (file_t *) kmalloc(sizeof(file_t));
     if (!proc1_exec || !vfs_open(PROC1_EXEC_PATH, proc1_exec))
     {
@@ -113,14 +108,14 @@ static void enter_proc1(void)
         spin_forever();
     }
     print_proc1_exec_info(proc1_exec);
+    uint32_t entry_point;
     if (!elf32_load_exec(proc1_exec, &entry_point))
     {
         console_puts("Failed: can not load executable image\n");
         spin_forever();
     }
-    proc1->context.eip = entry_point;
     console_puts("Done\n");
-    set_cr3(proc1->context.cr3);
+    set_cr3(proc1->cr3);
     __asm__ volatile(
         "cli\n"
         "mov eax, %[user_ss]\n"
@@ -136,10 +131,10 @@ static void enter_proc1(void)
         "iret\n"
         :
         : [user_ss] "r"((uint32_t) GDT_USER_DATA_SELECTOR),
-          [user_esp] "r"(proc1->context.esp),
-          [user_eflags] "r"(proc1->context.eflags),
+          [user_esp] "r"((uint32_t) USER_STACK_TOP),
+          [user_eflags] "r"(eflags),
           [user_cs] "r"((uint32_t) GDT_USER_CODE_SELECTOR),
-          [user_eip] "r"(proc1->context.eip)
+          [user_eip] "r"(entry_point)
         : "eax", "memory"
     );
 }
@@ -158,8 +153,8 @@ int main()
     init_interrupts();
     init_exceptions();
     init_syscall();
-    init_tty();
     init_tss((uint32_t) kernel_stack_top);
+    init_scheduler();
     init_timer();
     disk_is_ready = init_disk();
     if (disk_is_ready)
@@ -167,7 +162,9 @@ int main()
         fs_is_ready = init_fs();
     }
     fault_handler_is_ready = init_fault();
+    init_tty();
     init_keyboard();
+    init_idle_task();
     if (fs_is_ready && fault_handler_is_ready)
     {
         enter_proc1();

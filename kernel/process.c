@@ -4,8 +4,6 @@
 #include <kernel/memory.h>
 #include <kernel/paging.h>
 
-static task_t *current_task;
-
 static void copy_kernel_mappings(uintptr_t *dst_pgd, uintptr_t *src_pgd)
 {
     for (uint32_t i = 0; i < PAGE_DIRECTORY_ENTRIES; i++)
@@ -32,12 +30,7 @@ uint8_t create_task_mm(mm_t *mm)
     return 1;
 }
 
-void set_current_task(task_t *task)
+__attribute__((noreturn)) void spin_forever(void)
 {
-    current_task = task;
-}
-
-task_t *get_current_task(void)
-{
-    return current_task;
+    for (;;);
 }
