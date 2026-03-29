@@ -1,6 +1,7 @@
 bits 32
 
 global _start
+global kernel_stack_base
 global kernel_stack_top
 
 extern main
@@ -57,7 +58,7 @@ fill_page_table:
 
 section .bss
 align 16
-kernel_stack_bottom:
+kernel_stack_base:
     resb KERNEL_STACK_SIZE
 kernel_stack_top:
 align 4096

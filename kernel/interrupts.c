@@ -3,6 +3,8 @@
 #include <kernel/interrupts.h>
 #include <kernel/console.h>
 #include <kernel/gdt.h>
+#include <kernel/process.h>
+#include <kernel/timer.h>
 
 static idt_entry idt[IDT_ENTRIES];
 static irq_handler_t irq_handlers[16];
@@ -65,6 +67,10 @@ void interrupts_dispatch(uint8_t irq)
         irq_handlers[irq]();
     }
     pic_send_eoi(irq);
+    if (irq == 0 && (get_current_ticks() % SCHEDULER_TICK_INTERVAL) == 0)
+    {
+        schedule();
+    }
 }
 
 DECLARE_IRQ(0)
