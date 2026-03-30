@@ -1,6 +1,5 @@
 #include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 #include <kernel/console.h>
 #include <kernel/paging.h>
 #include <kernel/process.h>

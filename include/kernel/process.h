@@ -27,13 +27,11 @@ typedef struct task_struct_t
     file_t *file[PROCESS_FDS];
     struct task_struct_t *prev;
     struct task_struct_t *next;
-    struct task_struct_t *wait_next;
 } task_t;
 
 uint32_t alloc_pid(void);
 uint8_t create_task_mm(mm_t *mm);
 void release_task_mm(task_t *task);
-__attribute__((noreturn)) void spin_forever(void);
 void set_current_task(task_t *task);
 task_t *get_current_task(void);
 uint8_t init_scheduler(void);
@@ -50,5 +48,7 @@ __attribute__((noreturn, naked)) void enter_user_task(
     uint32_t user_esp,
     uint32_t user_ss
 );
+uint8_t prepare_user_task_stack(task_t *task, uint32_t entry_point, uint32_t user_eflags, uint32_t user_esp);
+__attribute__((noreturn)) void spin_forever(void);
 
 #endif

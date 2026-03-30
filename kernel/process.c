@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
+#include <kernel/gdt.h>
 #include <kernel/heap.h>
 #include <kernel/process.h>
 #include <kernel/memory.h>
@@ -101,6 +102,24 @@ void release_task_mm(task_t *task)
     }
     task->mm = 0;
     kfree(mm);
+}
+
+uint8_t prepare_user_task_stack(task_t *task, uint32_t entry_point, uint32_t user_eflags, uint32_t user_esp)
+{
+    uint32_t *stack = (uint32_t *) task->kernel_stack_top;
+    *--stack = (uint32_t) GDT_USER_DATA_SELECTOR;
+    *--stack = user_esp;
+    *--stack = user_eflags;
+    *--stack = (uint32_t) GDT_USER_CODE_SELECTOR;
+    *--stack = entry_point;
+    *--stack = 0;
+    *--stack = (uint32_t) enter_user_task;
+    *--stack = 0;
+    *--stack = 0;
+    *--stack = 0;
+    *--stack = 0;
+    task->kernel_esp = (uintptr_t) stack;
+    return 1;
 }
 
 __attribute__((noreturn)) void spin_forever(void)
