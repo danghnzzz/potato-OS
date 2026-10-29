@@ -248,6 +248,9 @@ __attribute__((noreturn)) void exit_task(int32_t exit_code)
     task_t *task = get_current_task();
     task->exit_code = exit_code;
     task->state = TASK_ZOMBIE;
+    console_puts("[Done] ");
+    console_put_dec32(task->pid);
+    console_putc('\n');
     for (uint32_t fd = 0; fd < PROCESS_FDS; fd++)
     {
         if (task->file[fd])

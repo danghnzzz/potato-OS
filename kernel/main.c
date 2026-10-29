@@ -91,6 +91,9 @@ static void enter_proc1(void)
         spin_forever();
     }
     console_puts("Done\n");
+    console_puts("Pid: ");
+    console_put_dec32(proc1->pid);
+    console_putc('\n');
     set_cr3(proc1->cr3);
     enter_user_task(
         entry_point,

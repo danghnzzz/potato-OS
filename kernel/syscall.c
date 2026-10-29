@@ -115,6 +115,9 @@ static ssize_t sys_execve(syscall_registers_t *regs)
         return (ssize_t) -1;
     }
     release_mm(old_mm);
+    console_puts("Pid: ");
+    console_put_dec32(task->pid);
+    console_putc('\n');
     regs->edi = regs->esi = regs->ebp = 0;
     regs->ebx = regs->edx = regs->ecx = 0;
     regs->user_eip = entry_point;
