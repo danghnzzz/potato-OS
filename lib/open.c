@@ -4,7 +4,7 @@
 
 int32_t open(const char *pathname, int32_t flags)
 {
-    int ret;
+    int32_t ret;
     __asm__ volatile (
         "int 0x80"
         : "=a" (ret)

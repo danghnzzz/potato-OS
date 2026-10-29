@@ -48,6 +48,11 @@ static void register_syscall(uint8_t num, syscall_handler_t handler)
     }
 }
 
+static ssize_t sys_exit(syscall_registers_t *regs)
+{
+    exit_task((int32_t) regs->ebx);
+}
+
 static ssize_t sys_read(syscall_registers_t *regs)
 {
     uint32_t fd  = regs->ebx;
@@ -122,6 +127,7 @@ uint8_t init_syscall(void)
 {
     console_puts("Setting up syscalls ... ");
     idt_set_gate(0x80, (uint32_t) syscall_entry, 0xef);
+    register_syscall(SYS_EXIT, sys_exit);
     register_syscall(SYS_READ, sys_read);
     register_syscall(SYS_WRITE, sys_write);
     register_syscall(SYS_EXECVE, sys_execve);

@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <kernel/console.h>
+#include <kernel/heap.h>
 #include <kernel/paging.h>
 #include <kernel/process.h>
 #include <kernel/tss.h>
@@ -8,6 +9,7 @@
 static task_t *task_ptr;
 static task_t *current_task;
 static task_t idle_task;
+static task_t *dead_task;
 static uint8_t idle_task_stack[PROCESS_KERNEL_STACK_SIZE];
 
 void set_current_task(task_t *task)
@@ -154,8 +156,21 @@ __attribute__((naked)) static void switch_to(task_t *prev, task_t *next)
     );
 }
 
+static void reap_dead_task(task_t *prev)
+{
+    if (!dead_task || dead_task == prev)
+    {
+        return;
+    }
+    dequeue_task(dead_task);
+    kfree((void *) dead_task->kernel_stack_base);
+    kfree(dead_task);
+    dead_task = 0;
+}
+
 static void context_switch(task_t *prev, task_t *next)
 {
+    reap_dead_task(prev);
     if (!prev || !next || prev == next)
     {
         return;
@@ -211,6 +226,7 @@ void schedule(void)
     {
         return;
     }
+    reap_dead_task(current);
     task_t *next = next_task();
     if (!next || next == current)
     {
@@ -219,6 +235,35 @@ void schedule(void)
     current->state = TASK_READY;
     context_switch(current, next);
     current->state = TASK_RUNNING;
+}
+
+__attribute__((noreturn)) void exit_task(int32_t exit_code)
+{
+    __asm__ volatile(
+        "cli"
+        :
+        :
+        : "memory"
+    );
+    task_t *task = get_current_task();
+    task->exit_code = exit_code;
+    task->state = TASK_ZOMBIE;
+    for (uint32_t fd = 0; fd < PROCESS_FDS; fd++)
+    {
+        if (task->file[fd])
+        {
+            vfs_close(task->file[fd]);
+            kfree(task->file[fd]);
+            task->file[fd] = 0;
+        }
+    }
+    task->cr3 = idle_task.cr3;
+    set_cr3(task->cr3);
+    release_mm(task->mm);
+    task->mm = 0;
+    dead_task = task;
+    context_switch(task, next_task());
+    spin_forever();
 }
 
 uint8_t init_idle_task(void)

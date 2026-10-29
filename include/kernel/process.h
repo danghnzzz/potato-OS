@@ -13,12 +13,14 @@
 #define TASK_READY 1
 #define TASK_RUNNING 2
 #define TASK_BLOCKED 3
+#define TASK_ZOMBIE 4
 
 typedef struct task_struct_t
 {
     uint32_t pid;
     struct task_struct_t *parent;
     uint8_t state;
+    int32_t exit_code;
     mm_t *mm;
     uintptr_t kernel_stack_base;
     uintptr_t kernel_stack_top;
@@ -43,6 +45,7 @@ uint8_t dequeue_task(task_t *task);
 void block_task(task_t *task);
 void wake_task(task_t *task);
 void schedule(void);
+__attribute__((noreturn)) void exit_task(int32_t exit_code);
 uint8_t init_idle_task(void);
 __attribute__((noreturn, naked)) void enter_user_task(
     uint32_t user_eip,

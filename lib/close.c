@@ -4,7 +4,7 @@
 
 int32_t close(int32_t fd)
 {
-    int ret;
+    int32_t ret;
     __asm__ volatile (
         "int 0x80"
         : "=a"(ret)
