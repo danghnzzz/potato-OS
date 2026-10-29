@@ -3,7 +3,7 @@ LIB := ../build/lib/libuser.a
 SRC := $(shell find . -name '*.c')
 BIN := $(patsubst ./%.c,../build/bin/%,$(SRC))
 
-.PHONY: all
+.PHONY: all $(LIB)
 
 $(shell mkdir -p ../build/bin)
 
