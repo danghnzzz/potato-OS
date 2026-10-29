@@ -22,5 +22,6 @@ uint8_t console_puts(const char *s);
 uint8_t console_put_hex8(uint8_t val, uint8_t prefix);
 uint8_t console_put_hex16(uint16_t val, uint8_t prefix);
 uint8_t console_put_hex32(uint32_t val, uint8_t prefix);
+uint8_t console_put_dec32(uint32_t val);
 
 #endif

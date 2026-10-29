@@ -155,3 +155,20 @@ uint8_t console_put_hex32(uint32_t val, uint8_t prefix)
     written += console_put_hex16((uint16_t) val, 0);
     return written;
 }
+
+uint8_t console_put_dec32(uint32_t val)
+{
+    char digits[10];
+    uint8_t count = 0;
+    do
+    {
+        digits[count++] = (char) ('0' + val % 10);
+        val /= 10;
+    }
+    while (val);
+    for (uint8_t i = count; i > 0; i--)
+    {
+        console_putc(digits[i - 1]);
+    }
+    return count;
+}
