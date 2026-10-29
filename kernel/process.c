@@ -3,6 +3,7 @@
 #include <string.h>
 #include <kernel/gdt.h>
 #include <kernel/heap.h>
+#include <kernel/interrupts.h>
 #include <kernel/process.h>
 #include <kernel/memory.h>
 #include <kernel/paging.h>
@@ -52,9 +53,8 @@ static uint8_t vma_file_seen(vm_area_t *head, vm_area_t *stop, file_t *file)
     return 0;
 }
 
-void release_task_mm(task_t *task)
+void release_mm(mm_t *mm)
 {
-    mm_t *mm = task->mm;
     if (!mm)
     {
         return;
@@ -101,8 +101,16 @@ void release_task_mm(task_t *task)
 
         free_pd(mm->pgd);
     }
-    task->mm = 0;
     kfree(mm);
+}
+
+void switch_mm(task_t *task, mm_t *mm)
+{
+    uint32_t flags = irq_save();
+    task->mm = mm;
+    task->cr3 = get_pd_lma((uintptr_t) mm->pgd);
+    set_cr3(task->cr3);
+    irq_restore(flags);
 }
 
 task_t *create_task(task_t *parent)
@@ -145,7 +153,8 @@ task_t *create_task(task_t *parent)
 
 void destroy_task(task_t *task)
 {
-    release_task_mm(task);
+    release_mm(task->mm);
+    task->mm = 0;
     if (task->kernel_stack_base)
     {
         kfree((void *) task->kernel_stack_base);

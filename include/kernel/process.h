@@ -31,7 +31,8 @@ typedef struct task_struct_t
 
 uint32_t alloc_pid(void);
 uint8_t create_task_mm(mm_t *mm);
-void release_task_mm(task_t *task);
+void release_mm(mm_t *mm);
+void switch_mm(task_t *task, mm_t *mm);
 task_t *create_task(task_t *parent);
 void destroy_task(task_t *task);
 void set_current_task(task_t *task);

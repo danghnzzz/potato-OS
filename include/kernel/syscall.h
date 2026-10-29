@@ -18,11 +18,16 @@ typedef struct
     uint32_t edi;
     uint32_t esi;
     uint32_t ebp;
-    uint32_t esp;
+    uint32_t old_kernel_esp;
     uint32_t ebx;
     uint32_t edx;
     uint32_t ecx;
     uint32_t eax;
+    uint32_t user_eip;
+    uint32_t user_cs;
+    uint32_t user_eflags;
+    uint32_t user_esp;
+    uint32_t user_ss;
 } syscall_registers_t;
 typedef ssize_t (*syscall_handler_t)(syscall_registers_t *regs);
 
