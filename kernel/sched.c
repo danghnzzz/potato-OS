@@ -28,7 +28,7 @@ __attribute__((noreturn)) static void idle_task_entry(void)
     {
         __asm__ volatile(
             "sti\n"
-            "hlt\n"
+            "hlt"
             :
             :
             : "memory"
@@ -149,7 +149,7 @@ __attribute__((naked)) static void switch_to(task_t *prev, task_t *next)
         "pop esi\n"
         "pop ebx\n"
         "pop ebp\n"
-        "ret\n"
+        "ret"
         :
         : [kernel_esp_offset] "i"(__builtin_offsetof(task_t, kernel_esp))
         : "eax", "memory"
@@ -306,7 +306,7 @@ __attribute__((noreturn, naked)) void enter_user_task(
         "mov fs, ax\n"
         "mov gs, ax\n"
         "add esp, 4\n"
-        "iret\n"
+        "iret"
         :
         :
         : "eax", "memory"

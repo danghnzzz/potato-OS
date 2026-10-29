@@ -14,7 +14,7 @@ static uintptr_t read_cr2(void)
     uintptr_t fault_addr;
 
     __asm__ volatile(
-        "mov %0, cr2\n"
+        "mov %0, cr2"
         : "=r"(fault_addr)
         :
         : "memory"

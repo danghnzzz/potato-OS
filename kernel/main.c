@@ -61,7 +61,7 @@ static void enter_proc1(void)
     uint32_t eflags;
     __asm__ volatile(
         "pushf\n"
-        "pop %0\n"
+        "pop %0"
         : "=r"(eflags)
         :
         : "memory"

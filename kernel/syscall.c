@@ -33,7 +33,7 @@ __attribute__((naked)) static void syscall_entry(void)
         "call syscall_dispatch\n"
         "add esp, 4\n"
         "popa\n"
-        "iret\n"
+        "iret"
         :
         :
         : "memory"

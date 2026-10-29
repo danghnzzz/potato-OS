@@ -38,7 +38,7 @@ static void reload_segment_registers(void)
         "mov gs, ax\n"
         "mov ss, ax\n"
         "jmp %1:.done_gdt\n"
-        ".done_gdt:\n"
+        ".done_gdt:"
         :
         : "i"(GDT_KERNEL_DATA_SELECTOR), "i"(GDT_KERNEL_CODE_SELECTOR)
         : "ax", "memory"

@@ -66,7 +66,7 @@ uintptr_t get_cr3(void)
 {
     uintptr_t cr3;
     __asm__ volatile(
-        "mov %0, cr3\n"
+        "mov %0, cr3"
         : "=r"(cr3)
         :
         : "memory"
@@ -77,7 +77,7 @@ uintptr_t get_cr3(void)
 void set_cr3(uintptr_t cr3)
 {
     __asm__ volatile(
-        "mov cr3, %0\n"
+        "mov cr3, %0"
         :
         : "r"(cr3)
         : "memory"
@@ -97,7 +97,7 @@ uintptr_t get_pd_vma(uintptr_t pgd_phys)
 static void flush_tlb_single(uintptr_t vma)
 {
     __asm__ volatile(
-        "invlpg [%0]\n"
+        "invlpg [%0]"
         :
         : "r"(vma)
         : "memory"

@@ -186,7 +186,7 @@ uint32_t irq_save(void)
     __asm__ volatile(
         "pushf\n"
         "pop %0\n"
-        "cli\n"
+        "cli"
         : "=r"(flags)
         :
         : "memory"
@@ -198,7 +198,7 @@ void irq_restore(uint32_t flags)
 {
     __asm__ volatile(
         "push %0\n"
-        "popf\n"
+        "popf"
         :
         : "r"(flags)
         : "memory", "cc"
