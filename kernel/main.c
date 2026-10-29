@@ -51,35 +51,13 @@ static void print_proc1_exec_info(file_t *exec)
 static void enter_proc1(void)
 {
     console_puts("Spawning proc1 ...\n");
-    task_t *proc1 = (task_t *) kmalloc(sizeof(task_t));
+    task_t *proc1 = create_task(0);
     if (!proc1)
     {
-        console_puts("Failed: can not allocate proc1 task\n");
+        console_puts("Failed: can not create proc1 task\n");
         spin_forever();
     }
-    memset(proc1, 0, sizeof(*proc1));
-    proc1->pid = 1;
-    proc1->parent = 0;
-    uint8_t *stack = kmalloc(PROCESS_KERNEL_STACK_SIZE);
-    if (!stack)
-    {
-        console_puts("Failed: can not allocate proc1 kernel stack\n");
-        spin_forever();
-    }
-    proc1->kernel_stack_base = (uintptr_t) stack;
-    proc1->kernel_stack_top = (uintptr_t) (stack + PROCESS_KERNEL_STACK_SIZE);
     tss_set_kernel_stack((uint32_t) proc1->kernel_stack_top);
-    mm_t *mm1 = kmalloc(sizeof(mm_t));
-    if (!mm1)
-    {
-        console_puts("Failed: can not allocate proc1 mm\n");
-        spin_forever();
-    }
-    if (!create_task_mm(mm1))
-    {
-        console_puts("Failed: can not create proc1 mm\n");
-        spin_forever();
-    }
     uint32_t eflags;
     __asm__ volatile(
         "pushf\n"
@@ -89,8 +67,6 @@ static void enter_proc1(void)
         : "memory"
     );
     eflags |= 0x200;
-    proc1->cr3 = get_pd_lma((uintptr_t) mm1->pgd);
-    proc1->mm = mm1;
     if (!enqueue_task(proc1))
     {
         console_puts("Failed: can not register proc1 task\n");

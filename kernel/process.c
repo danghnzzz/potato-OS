@@ -1,12 +1,13 @@
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 #include <kernel/gdt.h>
 #include <kernel/heap.h>
 #include <kernel/process.h>
 #include <kernel/memory.h>
 #include <kernel/paging.h>
 
-static uint32_t pid_count = 1;
+static uint32_t pid_count = 0;
 
 uint32_t alloc_pid(void)
 {
@@ -102,6 +103,54 @@ void release_task_mm(task_t *task)
     }
     task->mm = 0;
     kfree(mm);
+}
+
+task_t *create_task(task_t *parent)
+{
+    task_t *task = (task_t *) kmalloc(sizeof(*task));
+    if (!task)
+    {
+        return 0;
+    }
+    memset(task, 0, sizeof(*task));
+    task->pid = alloc_pid();
+    task->parent = parent;
+    task->state = TASK_NEW;
+    uint8_t *stack = (uint8_t *) kmalloc(PROCESS_KERNEL_STACK_SIZE);
+    if (!stack)
+    {
+        kfree(task);
+        return 0;
+    }
+    task->kernel_stack_base = (uintptr_t) stack;
+    task->kernel_stack_top = (uintptr_t) (stack + PROCESS_KERNEL_STACK_SIZE);
+    mm_t *mm = (mm_t *) kmalloc(sizeof(*mm));
+    if (!mm)
+    {
+        kfree(stack);
+        kfree(task);
+        return 0;
+    }
+    if (!create_task_mm(mm))
+    {
+        kfree(mm);
+        kfree(stack);
+        kfree(task);
+        return 0;
+    }
+    task->mm = mm;
+    task->cr3 = get_pd_lma((uintptr_t) mm->pgd);
+    return task;
+}
+
+void destroy_task(task_t *task)
+{
+    release_task_mm(task);
+    if (task->kernel_stack_base)
+    {
+        kfree((void *) task->kernel_stack_base);
+    }
+    kfree(task);
 }
 
 uint8_t prepare_user_task_stack(task_t *task, uint32_t entry_point, uint32_t user_eflags, uint32_t user_esp)
