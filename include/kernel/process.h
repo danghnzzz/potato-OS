@@ -46,6 +46,7 @@ void block_task(task_t *task);
 void wake_task(task_t *task);
 void schedule(void);
 __attribute__((noreturn)) void exit_task(int32_t exit_code);
+int32_t wait_task(int32_t pid, int32_t *child_exit_code);
 uint8_t init_idle_task(void);
 __attribute__((noreturn, naked)) void enter_user_task(
     uint32_t user_eip,

@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <kernel/console.h>
 #include <kernel/heap.h>
+#include <kernel/interrupts.h>
 #include <kernel/paging.h>
 #include <kernel/process.h>
 #include <kernel/tss.h>
@@ -162,9 +163,13 @@ static void reap_dead_task(task_t *prev)
     {
         return;
     }
-    dequeue_task(dead_task);
     kfree((void *) dead_task->kernel_stack_base);
-    kfree(dead_task);
+    dead_task->kernel_stack_base = 0;
+    if (!dead_task->parent)
+    {
+        dequeue_task(dead_task);
+        kfree(dead_task);
+    }
     dead_task = 0;
 }
 
@@ -265,8 +270,61 @@ __attribute__((noreturn)) void exit_task(int32_t exit_code)
     release_mm(task->mm);
     task->mm = 0;
     dead_task = task;
+    wake_task(task->parent);
     context_switch(task, next_task());
     spin_forever();
+}
+
+static task_t *get_zombie_child_task(task_t *parent, int32_t pid, uint8_t *has_child)
+{
+    *has_child = 0;
+    if (!task_ptr)
+    {
+        return 0;
+    }
+    task_t *iter = task_ptr;
+    do
+    {
+        if (iter->parent == parent && iter->pid == (uint32_t) pid)
+        {
+            *has_child = 1;
+            if (iter->state == TASK_ZOMBIE)
+            {
+                return iter;
+            }
+        }
+        iter = iter->next;
+    }
+    while (iter != task_ptr);
+    return 0;
+}
+
+int32_t wait_task(int32_t pid, int32_t *child_exit_code)
+{
+    task_t *current = get_current_task();
+    for (;;)
+    {
+        uint32_t flags = irq_save();
+        reap_dead_task(current);
+        uint8_t has_child;
+        task_t *zombie_child = get_zombie_child_task(current, pid, &has_child);
+        if (zombie_child)
+        {
+            int32_t child_pid = (int32_t) zombie_child->pid;
+            *child_exit_code = zombie_child->exit_code;
+            dequeue_task(zombie_child);
+            kfree(zombie_child);
+            irq_restore(flags);
+            return child_pid;
+        }
+        if (!has_child)
+        {
+            irq_restore(flags);
+            return -1;
+        }
+        block_task(current);
+        irq_restore(flags);
+    }
 }
 
 uint8_t init_idle_task(void)

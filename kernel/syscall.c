@@ -77,6 +77,19 @@ static ssize_t sys_write(syscall_registers_t *regs)
     return tty_write(buf, count);
 }
 
+static ssize_t sys_waitpid(syscall_registers_t *regs)
+{
+    int32_t pid = (int32_t) regs->ebx;
+    int32_t *status = (int32_t *) regs->ecx;
+    int32_t child_exit_code;
+    int32_t child_pid = wait_task(pid, &child_exit_code);
+    if (child_pid > 0 && status)
+    {
+        *status = child_exit_code;
+    }
+    return (ssize_t) child_pid;
+}
+
 static ssize_t sys_execve(syscall_registers_t *regs)
 {
     const char *exec_path = (const char *) regs->ebx;
@@ -133,6 +146,7 @@ uint8_t init_syscall(void)
     register_syscall(SYS_EXIT, sys_exit);
     register_syscall(SYS_READ, sys_read);
     register_syscall(SYS_WRITE, sys_write);
+    register_syscall(SYS_WAITPID, sys_waitpid);
     register_syscall(SYS_EXECVE, sys_execve);
     console_puts("Done\n");
     return 1;
