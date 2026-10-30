@@ -18,9 +18,15 @@ static void run_command(const char *name)
         path[path_length++] = name[i];
     }
     path[path_length] = '\0';
+    int32_t fd = open(path, 0);
+    if (fd < 0)
+    {
+        write(1, name, path_length - (sizeof(bin_dir) - 1));
+        write(1, not_found, sizeof(not_found) - 1);
+        return;
+    }
+    close(fd);
     execve(path, 0, 0);
-    write(1, name, path_length - (sizeof(bin_dir) - 1));
-    write(1, not_found, sizeof(not_found) - 1);
 }
 
 void _start(void)

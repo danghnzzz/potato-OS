@@ -24,7 +24,7 @@
     { \
         __asm__ volatile( \
             "pusha\n" \
-            "push dword [esp + 32]\n" \
+            "push dword ptr [esp + 32]\n" \
             "push " #n "\n" \
             "call exceptions_dispatch\n" \
             "add esp, 8\n" \

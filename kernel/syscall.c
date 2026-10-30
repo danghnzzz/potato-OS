@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
 #include <kernel/elf.h>
 #include <kernel/fs.h>
 #include <kernel/heap.h>
@@ -77,6 +78,47 @@ static ssize_t sys_write(syscall_registers_t *regs)
     return tty_write(buf, count);
 }
 
+static ssize_t sys_open(syscall_registers_t *regs)
+{
+    const char *file_path = (const char *) regs->ebx;
+    task_t *task = get_current_task();
+    uint32_t fd = 3;
+    while (fd < PROCESS_FDS && task->file[fd])
+    {
+        fd++;
+    }
+    if (fd == PROCESS_FDS)
+    {
+        return (ssize_t) -1;
+    }
+    file_t *file = (file_t *) kmalloc(sizeof(*file));
+    if (!file)
+    {
+        return (ssize_t) -1;
+    }
+    if (!vfs_open(file_path, file))
+    {
+        kfree(file);
+        return (ssize_t) -1;
+    }
+    task->file[fd] = file;
+    return (ssize_t) fd;
+}
+
+static ssize_t sys_close(syscall_registers_t *regs)
+{
+    uint32_t fd = regs->ebx;
+    task_t *task = get_current_task();
+    if (fd >= PROCESS_FDS || !task->file[fd])
+    {
+        return (ssize_t) -1;
+    }
+    vfs_close(task->file[fd]);
+    kfree(task->file[fd]);
+    task->file[fd] = 0;
+    return 0;
+}
+
 static ssize_t sys_waitpid(syscall_registers_t *regs)
 {
     int32_t pid = (int32_t) regs->ebx;
@@ -146,6 +188,8 @@ uint8_t init_syscall(void)
     register_syscall(SYS_EXIT, sys_exit);
     register_syscall(SYS_READ, sys_read);
     register_syscall(SYS_WRITE, sys_write);
+    register_syscall(SYS_OPEN, sys_open);
+    register_syscall(SYS_CLOSE, sys_close);
     register_syscall(SYS_WAITPID, sys_waitpid);
     register_syscall(SYS_EXECVE, sys_execve);
     console_puts("Done\n");
