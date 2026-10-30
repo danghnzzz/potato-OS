@@ -212,7 +212,6 @@ void block_task(task_t *task)
         spin_forever();
     }
     context_switch(task, next);
-    task->state = TASK_RUNNING;
 }
 
 void wake_task(task_t *task)
@@ -239,7 +238,6 @@ void schedule(void)
     }
     current->state = TASK_READY;
     context_switch(current, next);
-    current->state = TASK_RUNNING;
 }
 
 __attribute__((noreturn)) void exit_task(int32_t exit_code)
